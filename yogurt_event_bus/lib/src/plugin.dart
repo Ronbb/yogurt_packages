@@ -1,7 +1,7 @@
 part of 'event_bus.dart';
 
-abstract class PluginBase<State extends StateBase> {
+abstract class PluginBase<Controller extends EventBus> {
   const PluginBase();
 
-  void onCreate(EventBus<State> controller);
+  void onCreate(Controller controller);
 }

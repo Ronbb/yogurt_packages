@@ -13,12 +13,14 @@ part 'editor_controller.freezed.dart';
 
 class EditorController extends EventBus<EditorState> {
   EditorController({
-    required super.state,
     required CellState root,
+    super.state = const EditorState(),
     List<EditorPluginBase> plugins = const [],
   }) : super(plugins: plugins) {
-    _cellPlugins =
-        plugins.map((e) => e.cell).whereType<PluginBase<CellState>>().toList();
+    _cellPlugins = plugins
+        .map((e) => e.cell)
+        .whereType<PluginBase<CellController>>()
+        .toList();
     this.root = _create(root);
   }
 
@@ -29,7 +31,7 @@ class EditorController extends EventBus<EditorState> {
   @override
   List<EditorPluginBase> get plugins => super.plugins.cast();
 
-  late final List<PluginBase<CellState>> _cellPlugins;
+  late final List<PluginBase<CellController>> _cellPlugins;
 
   CellController _create(CellState state) {
     return CellController._(
@@ -68,10 +70,14 @@ class EditorState extends StateBase with _$EditorState {
   const factory EditorState({
     @Default(PluginState()) PluginState plugins,
   }) = _EditorState;
+
+  T? plugin<T>() {
+    return plugins.state<T>();
+  }
 }
 
-abstract class EditorPluginBase extends PluginBase<EditorState> {
+abstract class EditorPluginBase extends PluginBase<EditorController> {
   const EditorPluginBase();
 
-  PluginBase<CellState>? get cell => null;
+  CellPluginBase? get cell => null;
 }

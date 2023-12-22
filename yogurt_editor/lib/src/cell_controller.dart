@@ -30,6 +30,12 @@ class CellController extends EventBus<CellState> {
     return cell;
   }
 
+  void initializePluginState<T>(T Function(T?) creator) {
+    update(state.copyWith(
+      plugins: state.plugins.update(creator(state.plugins.state<T>())),
+    ));
+  }
+
   @override
   Future<void> close() {
     children.dispose();
@@ -46,4 +52,12 @@ class CellState extends StateBase with _$CellState {
     required CellModelBase model,
     @Default(PluginState()) PluginState plugins,
   }) = _CellState;
+
+  T? plugin<T>() {
+    return plugins.state<T>();
+  }
+}
+
+abstract class CellPluginBase extends PluginBase<CellController> {
+  const CellPluginBase();
 }

@@ -1,7 +1,10 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yogurt_editor/yogurt_editor.dart';
+
+export 'package:yogurt_editor/yogurt_editor.dart';
 
 final _counts = HashMap<Listenable, int>.identity();
 final _watchers = HashMap<Listenable, _Watcher>.identity();
@@ -70,5 +73,23 @@ class _HasNotified extends Matcher {
     } catch (e) {
       return mismatchDescription.add("isn't watched");
     }
+  }
+}
+
+class TestCellModel extends CellModelBase {
+  const TestCellModel();
+
+  static var id = 0;
+
+  static CellState create() {
+    return CellState(
+      id: id++,
+      model: const TestCellModel(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox();
   }
 }
