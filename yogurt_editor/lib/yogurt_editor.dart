@@ -1,2 +1,2 @@
-export 'src/cell_controller.dart';
+export 'src/cell_model.dart';
 export 'src/editor_controller.dart';

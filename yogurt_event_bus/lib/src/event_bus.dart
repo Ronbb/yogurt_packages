@@ -13,7 +13,7 @@ part 'state.dart';
 class EventBus<State extends StateBase> {
   EventBus({
     required State state,
-    List<PluginBase> plugins = const [],
+    List<PluginBase<State>> plugins = const [],
   })  : _state = state,
         _plugins = plugins {
     for (final plugin in _plugins) {
@@ -29,7 +29,10 @@ class EventBus<State extends StateBase> {
   final _eventHandlers = <Type, List<_EventHandler>>{};
   final _eventSubscriptions = <Type, StreamSubscription>{};
 
-  final List<PluginBase> _plugins;
+  final List<PluginBase<State>> _plugins;
+  List<PluginBase<State>> get plugins => _plugins is UnmodifiableListView
+      ? _plugins
+      : UnmodifiableListView(_plugins);
 
   State _state;
   State get state => _state;
