@@ -4,7 +4,7 @@ import 'test_utils.dart';
 
 void main() {
   group('bounds', () {
-    test('bounds initial', () async {
+    test('initial', () async {
       final editor = EditorController(
         state: const EditorState(),
         root: TestCellModel.create(),
