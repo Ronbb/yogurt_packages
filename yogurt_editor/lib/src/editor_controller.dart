@@ -26,6 +26,8 @@ class EditorController extends EventBus<EditorState> {
 
   final Map<dynamic, CellController> _cells = {};
 
+  Map<dynamic, CellController> get cells => UnmodifiableMapView(_cells);
+
   @override
   List<EditorPluginBase> get plugins => super.plugins.cast();
 

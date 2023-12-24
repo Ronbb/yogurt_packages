@@ -80,7 +80,7 @@ class EventBus<State extends StateBase> {
   }) {
     final h = _EventHandler(
       (event) {
-        handler(event as Event, update);
+        return handler(event as Event, update);
       },
       priority,
     );

@@ -2,6 +2,10 @@ part of 'plugins.dart';
 
 typedef Bounds = Rect;
 
+extension BoundsPosition on Bounds {
+  Offset get position => topLeft;
+}
+
 @freezed
 class BoundsEvent extends EventBase with _$BoundsEvent {
   const BoundsEvent._();
@@ -10,8 +14,12 @@ class BoundsEvent extends EventBase with _$BoundsEvent {
     required Offset delta,
   }) = ResizeEvent;
 
-  const factory BoundsEvent.move({
+  const factory BoundsEvent.moveRelative({
     required Offset delta,
+  }) = MoveRelativeEvent;
+
+  const factory BoundsEvent.move({
+    required Offset position,
   }) = MoveEvent;
 }
 
@@ -32,7 +40,7 @@ class CellBoundsPlugin extends CellPluginBase {
   void onCreate(CellController controller) {
     controller.initializePluginState<Bounds>((bounds) => bounds ?? Bounds.zero);
 
-    controller.on<MoveEvent>((event, update) {
+    controller.on<MoveRelativeEvent>((event, update) {
       update(controller.state.rebuildWithPlugin((Bounds bounds) {
         return bounds.shift(event.delta);
       }));
@@ -40,7 +48,13 @@ class CellBoundsPlugin extends CellPluginBase {
 
     controller.on<ResizeEvent>((event, update) {
       update(controller.state.rebuildWithPlugin((Bounds bounds) {
-        return bounds.topLeft & (bounds.size + event.delta);
+        return bounds.position & (bounds.size + event.delta);
+      }));
+    });
+
+    controller.on<MoveEvent>((event, update) {
+      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+        return event.position & bounds.size;
       }));
     });
   }

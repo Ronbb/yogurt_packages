@@ -14,35 +14,42 @@ void main() {
     );
 
     test('initial', () async {
-      expect(editor.root.children.value, isEmpty);
-
-      watch(editor.root.children);
-
       final cell = editor.create(TestCellModel.create());
-
       expect(cell.state.plugin<Bounds>(), isNotNull);
+    });
+
+    test('move relatively', () async {
+      final cell = editor.create(TestCellModel.create({
+        Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+      }));
+
+      final result = await cell.invoke(
+        const MoveRelativeEvent(
+          delta: Offset(50, 50),
+        ),
+      );
+      expect(result, isA<InvokeDone>());
+      expect(cell.state.plugin<Bounds>().position, const Offset(150, 150));
     });
 
     test('move', () async {
       final cell = editor.create(TestCellModel.create({
         Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
       }));
-      expect(cell.state.plugin<Bounds>(), isNotNull);
 
       final result = await cell.invoke(
         const MoveEvent(
-          delta: Offset(50, 50),
+          position: Offset(50, 50),
         ),
       );
       expect(result, isA<InvokeDone>());
-      expect(cell.state.plugin<Bounds>().topLeft, const Offset(150, 150));
+      expect(cell.state.plugin<Bounds>().position, const Offset(50, 50));
     });
 
     test('resize', () async {
       final cell = editor.create(TestCellModel.create({
         Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
       }));
-      expect(cell.state.plugin<Bounds>(), isNotNull);
 
       final result = await cell.invoke(
         const ResizeEvent(
