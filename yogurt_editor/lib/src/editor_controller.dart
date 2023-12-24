@@ -68,13 +68,13 @@ abstract class EditorPluginBase extends PluginBase<EditorController> {
 }
 
 @freezed
-class _State extends StateBase with _$State {
-  const _State._();
+class StateWithPlugins extends StateBase with _$StateWithPlugins {
+  const StateWithPlugins._();
 
-  const factory _State.editor({
+  const factory StateWithPlugins.editor({
     @Default({}) Map<Type, dynamic> plugins,
   }) = EditorState;
-  const factory _State.cell({
+  const factory StateWithPlugins.cell({
     required dynamic id,
     required CellModelBase model,
     @Default({}) Map<Type, dynamic> plugins,
