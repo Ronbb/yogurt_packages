@@ -3,12 +3,16 @@ part of 'plugins.dart';
 typedef Bounds = Rect;
 
 @freezed
-class BoundsEvent with _$BoundsEvent {
+class BoundsEvent extends EventBase with _$BoundsEvent {
   const BoundsEvent._();
 
-  const factory BoundsEvent.update({
-    required Bounds bounds,
-  }) = UpdateBoundsEvent;
+  const factory BoundsEvent.resize({
+    required Offset delta,
+  }) = ResizeEvent;
+
+  const factory BoundsEvent.move({
+    required Offset delta,
+  }) = MoveEvent;
 }
 
 class BoundsPlugin extends EditorPluginBase {
@@ -27,5 +31,17 @@ class CellBoundsPlugin extends CellPluginBase {
   @override
   void onCreate(CellController controller) {
     controller.initializePluginState<Bounds>((bounds) => bounds ?? Bounds.zero);
+
+    controller.on<MoveEvent>((event, update) {
+      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+        return bounds.shift(event.delta);
+      }));
+    });
+
+    controller.on<ResizeEvent>((event, update) {
+      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+        return bounds.topLeft & (bounds.size + event.delta);
+      }));
+    });
   }
 }

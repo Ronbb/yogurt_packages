@@ -81,10 +81,13 @@ class TestCellModel extends CellModelBase {
 
   static var id = 0;
 
-  static CellState create() {
+  static CellState create([
+    Map<Type, dynamic> plugins = const <Type, dynamic>{},
+  ]) {
     return CellState(
       id: id++,
       model: const TestCellModel(),
+      plugins: plugins,
     );
   }
 

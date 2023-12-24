@@ -56,9 +56,15 @@ class EventBus<State extends StateBase> {
     _stateController.add(state);
   }
 
-  Future<InvokeResult> invoke(EventBase event) {
+  Future<InvokeResult> invoke<Event extends EventBase>(Event event) {
     if (isClosed) {
       throw Exception('EventBus is closed.');
+    }
+
+    if (_eventHandlers[Event]?.isEmpty ?? true) {
+      return Future.value(InvokeResult.unhandled(
+        state: state,
+      ));
     }
 
     final completer = Completer<InvokeResult>();
@@ -97,6 +103,8 @@ class EventBus<State extends StateBase> {
             return;
           }
 
+          bool hasError = false;
+
           try {
             for (var _EventHandler(:handler) in handlers) {
               await handler(event);
@@ -109,10 +117,12 @@ class EventBus<State extends StateBase> {
               state: state,
               error: e,
             ));
+
+            hasError = true;
           }
 
-          if (event is! AfterEvent && !isClosed) {
-            invoke(AfterEvent(
+          if (event is! AfterEvent && !isClosed && !hasError) {
+            await invoke(AfterEvent(
               current: state,
               previous: previous,
               event: event,

@@ -31,9 +31,7 @@ class CellController extends EventBus<CellState> {
   }
 
   void initializePluginState<T>(T Function(T?) creator) {
-    update(state.copyWith(
-      plugins: state.plugins.update(creator(state.plugins.state<T>())),
-    ));
+    update(state.copyWithPlugin(creator(state.plugins[T])));
   }
 
   @override
@@ -43,21 +41,4 @@ class CellController extends EventBus<CellState> {
   }
 }
 
-@freezed
-class CellState extends StateBase with _$CellState {
-  const CellState._();
-
-  const factory CellState({
-    required dynamic id,
-    required CellModelBase model,
-    @Default(PluginState()) PluginState plugins,
-  }) = _CellState;
-
-  T? plugin<T>() {
-    return plugins.state<T>();
-  }
-}
-
-abstract class CellPluginBase extends PluginBase<CellController> {
-  const CellPluginBase();
-}
+typedef CellPluginBase = PluginBase<CellController>;

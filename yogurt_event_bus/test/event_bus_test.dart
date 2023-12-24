@@ -29,7 +29,7 @@ class _TestEvent extends EventBase with _TestValue {
 }
 
 class _TestPlugin extends PluginBase {
-  const _TestPlugin();
+  _TestPlugin();
 
   @override
   void onCreate(EventBus controller) {
@@ -43,7 +43,7 @@ void main() {
   test('event bus', () async {
     final bus = EventBus(
       state: const _TestState(null),
-      plugins: [const _TestPlugin()],
+      plugins: [_TestPlugin()],
     );
 
     final result = await bus.invoke(const _TestEvent(null));

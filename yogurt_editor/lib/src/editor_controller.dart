@@ -5,7 +5,6 @@ import 'package:yogurt_event_bus/yogurt_event_bus.dart';
 
 import 'cell_model.dart';
 import 'notifier.dart';
-import 'plugin_state.dart';
 
 part 'cell_controller.dart';
 part 'editor_controller.freezed.dart';
@@ -62,21 +61,37 @@ class EditorController extends EventBus<EditorState> {
   }
 }
 
-@freezed
-class EditorState extends StateBase with _$EditorState {
-  const EditorState._();
-
-  const factory EditorState({
-    @Default(PluginState()) PluginState plugins,
-  }) = _EditorState;
-
-  T? plugin<T>() {
-    return plugins.state<T>();
-  }
-}
-
 abstract class EditorPluginBase extends PluginBase<EditorController> {
   const EditorPluginBase();
 
   CellPluginBase? get cell => null;
+}
+
+@freezed
+class _State extends StateBase with _$State {
+  const _State._();
+
+  const factory _State.editor({
+    @Default({}) Map<Type, dynamic> plugins,
+  }) = EditorState;
+  const factory _State.cell({
+    required dynamic id,
+    required CellModelBase model,
+    @Default({}) Map<Type, dynamic> plugins,
+  }) = CellState;
+
+  @useResult
+  T plugin<T>() {
+    return plugins[T]!;
+  }
+
+  @useResult
+  R rebuildWithPlugin<T, R>(T Function(T plugin) rebuilder) {
+    return copyWithPlugin(rebuilder(plugin()));
+  }
+
+  @useResult
+  R copyWithPlugin<T, R>(T plugin) {
+    return copyWith(plugins: Map.of(plugins)..[T] = plugin) as R;
+  }
 }
