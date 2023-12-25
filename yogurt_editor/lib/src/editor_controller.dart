@@ -88,6 +88,11 @@ class StateWithPlugins extends StateBase with _$StateWithPlugins {
   }
 
   @useResult
+  bool has<T>() {
+    return plugins.containsKey(T);
+  }
+
+  @useResult
   R rebuildWithPlugin<T, R>(T Function(T plugin) rebuilder) {
     return copyWithPlugin(rebuilder(plugin()));
   }

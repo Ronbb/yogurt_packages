@@ -59,3 +59,32 @@ class CellBoundsPlugin extends CellPluginBase {
     });
   }
 }
+
+extension BoundsHitTest on EditorController {
+  @useResult
+  List<CellController> hitTest(Offset position) {
+    final result = <CellController>[];
+    Iterable<CellController> cells = [root];
+    while (true) {
+      var hit = false;
+      for (var cell in cells) {
+        if (!cell.state.has<Bounds>()) {
+          continue;
+        }
+
+        final bounds = cell.state.plugin<Bounds>();
+        if (bounds.contains(position)) {
+          hit = true;
+          result.add(cell);
+          cells = cell.children.value.values;
+          break;
+        }
+      }
+
+      if (!hit) {
+        break;
+      }
+    }
+    return result;
+  }
+}
