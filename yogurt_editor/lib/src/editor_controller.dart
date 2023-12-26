@@ -20,6 +20,7 @@ class EditorController extends EventBus<EditorState> {
         .whereType<PluginBase<CellController>>()
         .toList();
     this.root = _create(root);
+    _cells[root.id] = this.root;
   }
 
   late final CellController root;
@@ -35,6 +36,7 @@ class EditorController extends EventBus<EditorState> {
 
   CellController _create(CellState state) {
     return CellController._(
+      editor: this,
       state: state,
       plugins: _cellPlugins,
     );
@@ -60,6 +62,14 @@ class EditorController extends EventBus<EditorState> {
     cell?.parent?._remove(id);
 
     return cell;
+  }
+
+  void reattach(CellController parent, CellController child) {
+    if (child.parent == parent) {
+      return;
+    }
+    child.parent?._remove(child.state.id);
+    parent._add(child);
   }
 }
 

@@ -5,11 +5,14 @@ class CellController extends EventBus<CellState> {
     required super.state,
     super.plugins,
     CellController? parent,
+    required this.editor,
   }) : _parent = parent;
 
   CellController? _parent;
 
   CellController? get parent => _parent;
+
+  final EditorController editor;
 
   final Map<dynamic, CellController> _children = {};
 

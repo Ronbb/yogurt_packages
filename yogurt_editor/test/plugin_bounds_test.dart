@@ -39,19 +39,13 @@ void main() {
       );
 
       final result1 = editor.hitTest(const Offset(100, 100));
-      expect(result1, hasLength(3));
-      expect(result1[0], editor.root);
-      expect(result1[1], cell1);
-      expect(result1[2], cell2);
+      expect(result1, cell2);
 
       final result2 = editor.hitTest(const Offset(25, 25));
-      expect(result2, hasLength(2));
-      expect(result2[0], editor.root);
-      expect(result2[1], cell1);
+      expect(result2, cell1);
 
       final result3 = editor.hitTest(const Offset(300, 300));
-      expect(result3, hasLength(1));
-      expect(result3[0], editor.root);
+      expect(result3, editor.root);
     });
 
     test('move relatively', () async {

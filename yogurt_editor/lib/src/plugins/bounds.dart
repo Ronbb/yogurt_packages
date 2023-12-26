@@ -62,8 +62,8 @@ class CellBoundsPlugin extends CellPluginBase {
 
 extension BoundsHitTest on EditorController {
   @useResult
-  List<CellController> hitTest(Offset position) {
-    final result = <CellController>[];
+  CellController? hitTest(Offset position) {
+    CellController? result;
     Iterable<CellController> cells = [root];
     while (true) {
       var hit = false;
@@ -75,7 +75,7 @@ extension BoundsHitTest on EditorController {
         final bounds = cell.state.plugin<Bounds>();
         if (bounds.contains(position)) {
           hit = true;
-          result.add(cell);
+          result = cell;
           cells = cell.children.value.values;
           break;
         }

@@ -25,7 +25,10 @@ void main() {
       expect(cell.state.plugin<Drag>(), isA<Dragging>());
       expect(
         cell.state.plugin<Drag>(),
-        const Dragging(initialPosition: Offset.zero),
+        Dragging(
+          initialPosition: Offset.zero,
+          initialParentId: cell.parent?.state.id,
+        ),
       );
     });
 
@@ -79,6 +82,43 @@ void main() {
         delta: Offset(100, 100),
       ));
       expect(cell.state.plugin<Bounds>().position, Offset.zero);
+    });
+
+    test('drop', () async {
+      final editor = EditorController(
+        state: const EditorState(),
+        root: TestCellModel.create({
+          Bounds: const Bounds.fromLTWH(0, 0, 1000, 1000),
+        }),
+        plugins: const [DragPlugin(), BoundsPlugin()],
+      );
+
+      final container = editor.create(TestCellModel.create({
+        Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
+      }));
+
+      final cell = editor.create(
+        TestCellModel.create({
+          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+        }),
+        parent: container,
+      );
+
+      await cell.invoke(const DragStartEvent());
+      await cell.invoke(const DragUpdateEvent(
+        delta: Offset(500, 500),
+      ));
+      await cell.invoke(const DragCompleteEvent());
+
+      expect(cell.parent, editor.root);
+
+      await cell.invoke(const DragStartEvent());
+      await cell.invoke(const DragUpdateEvent(
+        delta: Offset(-500, -500),
+      ));
+      await cell.invoke(const DragCompleteEvent());
+
+      expect(cell.parent, container);
     });
   });
 }

@@ -17,5 +17,6 @@ class InvokeResult<State extends StateBase> with _$InvokeResult<State> {
   const factory InvokeResult.error({
     required State state,
     required Object? error,
+    required StackTrace stackTrace,
   }) = InvokeError<State>;
 }

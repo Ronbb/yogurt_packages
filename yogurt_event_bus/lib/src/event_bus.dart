@@ -22,10 +22,10 @@ class EventBus<State extends StateBase> {
   }
 
   final _eventController = StreamController<EventBase>.broadcast();
-  final _stateController = StreamController<StateBase>.broadcast();
+  final _stateController = StreamController<State>.broadcast();
 
   final _eventCompleters =
-      LinkedHashMap<EventBase, Completer<InvokeResult>>.identity();
+      LinkedHashMap<EventBase, Completer<InvokeResult<State>>>.identity();
   final _eventHandlers = <Type, List<_EventHandler>>{};
   final _eventSubscriptions = <Type, StreamSubscription>{};
 
@@ -56,7 +56,7 @@ class EventBus<State extends StateBase> {
     _stateController.add(state);
   }
 
-  Future<InvokeResult> invoke<Event extends EventBase>(Event event) {
+  Future<InvokeResult<State>> invoke<Event extends EventBase>(Event event) {
     if (isClosed) {
       throw Exception('EventBus is closed.');
     }
@@ -67,7 +67,7 @@ class EventBus<State extends StateBase> {
       ));
     }
 
-    final completer = Completer<InvokeResult>();
+    final completer = Completer<InvokeResult<State>>();
     _eventCompleters[event] = completer;
     _eventController.add(event);
 
@@ -112,10 +112,11 @@ class EventBus<State extends StateBase> {
             _eventCompleters[event]?.complete(InvokeResult.done(
               state: state,
             ));
-          } catch (e) {
+          } catch (e, stackTrace) {
             _eventCompleters[event]?.complete(InvokeResult.error(
               state: state,
               error: e,
+              stackTrace: stackTrace,
             ));
 
             hasError = true;
