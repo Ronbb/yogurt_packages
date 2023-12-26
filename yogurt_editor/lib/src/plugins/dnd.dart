@@ -20,11 +20,22 @@ class Drop with _$Drop {
 
   const factory Drop.disabled() = DropDisabled;
 
-  const factory Drop.ready() = DropReady;
+  const factory Drop.ready({
+    @Default(AllAllowedDropTest()) DropTest test,
+  }) = DropReady;
+}
 
-  const factory Drop.candinate({
-    dynamic id,
-  }) = DropCandinate;
+abstract class DropTest {
+  const DropTest();
+
+  bool call(CellController target, CellController dragging);
+}
+
+class AllAllowedDropTest extends DropTest {
+  const AllAllowedDropTest();
+
+  @override
+  bool call(CellController target, CellController dragging) => true;
 }
 
 @freezed
@@ -94,7 +105,12 @@ class CellDragPlugin extends CellPluginBase {
           }
 
           final newParent = hitTest == controller ? hitTest?.parent : hitTest;
-          if (newParent == null) {
+          if (newParent == null || !newParent.state.has<Drop>()) {
+            return;
+          }
+
+          final drop = newParent.state.plugin<Drop>();
+          if (drop is! DropReady || !drop.test(newParent, controller)) {
             return;
           }
 

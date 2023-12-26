@@ -120,5 +120,104 @@ void main() {
 
       expect(cell.parent, container);
     });
+
+    test('drop disable', () async {
+      final editor = EditorController(
+        state: const EditorState(),
+        root: TestCellModel.create({
+          Bounds: const Bounds.fromLTWH(0, 0, 1000, 1000),
+        }),
+        plugins: const [DragPlugin(), BoundsPlugin()],
+      );
+
+      final container = editor.create(TestCellModel.create({
+        Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
+        Drop: const Drop.disabled(),
+      }));
+
+      final cell = editor.create(
+        TestCellModel.create({
+          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+        }),
+        parent: container,
+      );
+
+      await cell.invoke(const DragStartEvent());
+      await cell.invoke(const DragUpdateEvent(
+        delta: Offset(50, 50),
+      ));
+      await cell.invoke(const DragCompleteEvent());
+
+      expect(cell.parent, container);
+
+      await cell.invoke(const DragStartEvent());
+      await cell.invoke(const DragUpdateEvent(
+        delta: Offset(500, 500),
+      ));
+      await cell.invoke(const DragCompleteEvent());
+
+      expect(cell.parent, editor.root);
+
+      await cell.invoke(const DragStartEvent());
+      await cell.invoke(const DragUpdateEvent(
+        delta: Offset(-500, -500),
+      ));
+      await cell.invoke(const DragCompleteEvent());
+
+      expect(cell.parent, editor.root);
+    });
+
+    test('drop prevent', () async {
+      final editor = EditorController(
+        state: const EditorState(),
+        root: TestCellModel.create({
+          Bounds: const Bounds.fromLTWH(0, 0, 1000, 1000),
+        }),
+        plugins: const [DragPlugin(), BoundsPlugin()],
+      );
+
+      final container = editor.create(TestCellModel.create({
+        Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
+        Drop: const Drop.ready(test: _AllPreventDropTest()),
+      }));
+
+      final cell = editor.create(
+        TestCellModel.create({
+          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+        }),
+        parent: container,
+      );
+
+      await cell.invoke(const DragStartEvent());
+      await cell.invoke(const DragUpdateEvent(
+        delta: Offset(50, 50),
+      ));
+      await cell.invoke(const DragCompleteEvent());
+
+      expect(cell.parent, container);
+
+      await cell.invoke(const DragStartEvent());
+      await cell.invoke(const DragUpdateEvent(
+        delta: Offset(500, 500),
+      ));
+      await cell.invoke(const DragCompleteEvent());
+
+      expect(cell.parent, editor.root);
+
+      await cell.invoke(const DragStartEvent());
+      await cell.invoke(const DragUpdateEvent(
+        delta: Offset(-500, -500),
+      ));
+      await cell.invoke(const DragCompleteEvent());
+
+      expect(cell.parent, editor.root);
+    });
   });
+}
+
+class _AllPreventDropTest extends DropTest {
+  const _AllPreventDropTest();
+
+  @override
+  bool call(CellController target, CellController dragging) => false;
 }
