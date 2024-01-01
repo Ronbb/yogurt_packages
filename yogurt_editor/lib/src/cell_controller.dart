@@ -1,5 +1,17 @@
 part of 'editor_controller.dart';
 
+@freezed
+class DependencyEvent<Event extends EventBase, State extends StateBase>
+    extends EventBase with _$DependencyEvent<Event, State> {
+  const DependencyEvent._();
+
+  const factory DependencyEvent({
+    required State previous,
+    required State current,
+    required Event event,
+  }) = _DependencyEvent<Event, State>;
+}
+
 class CellController extends EventBus<CellState> {
   CellController._({
     required super.state,
@@ -15,6 +27,8 @@ class CellController extends EventBus<CellState> {
   final EditorController editor;
 
   final Map<dynamic, CellController> _children = {};
+
+  final Map<dynamic, CellController> _dependencies = {};
 
   late final children = UnmodifiedValueNotifier(UnmodifiableMapView(_children));
 
@@ -33,8 +47,35 @@ class CellController extends EventBus<CellState> {
     return cell;
   }
 
+  void _addDependency(CellController cell) {
+    _dependencies[cell.state.id] = cell;
+  }
+
+  void _removeDependency(CellController cell) {
+    _dependencies.remove(cell.state.id);
+  }
+
   void initializePluginState<T>(T Function(T?) creator) {
     update(state.copyWithPlugin(creator(state.plugins[T])));
+  }
+
+  @override
+  FutureOr<void> onAfterInvoke(EventBase event, CellState previous) async {
+    if (event is DependencyEvent) {
+      return;
+    }
+
+    await super.onAfterInvoke(event, previous);
+
+    for (var dependency in _dependencies.values) {
+      await dependency.invoke(
+        DependencyEvent(
+          previous: previous,
+          current: state,
+          event: event,
+        ),
+      );
+    }
   }
 
   @override

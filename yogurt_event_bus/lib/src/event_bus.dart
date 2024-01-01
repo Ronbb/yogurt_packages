@@ -123,15 +123,20 @@ class EventBus<State extends StateBase> {
           }
 
           if (event is! AfterEvent && !isClosed && !hasError) {
-            await invoke(AfterEvent(
-              current: state,
-              previous: previous,
-              event: event,
-            ));
+            await onAfterInvoke(event, previous);
           }
         },
       ).listen(null);
     }
+  }
+
+  @mustCallSuper
+  FutureOr<void> onAfterInvoke(EventBase event, State previous) async {
+    await invoke(AfterEvent(
+      current: state,
+      previous: previous,
+      event: event,
+    ));
   }
 
   Future<void> close() async {
