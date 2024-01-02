@@ -139,6 +139,13 @@ class EventBus<State extends StateBase> {
     ));
   }
 
+  void after<Event extends EventBase>(
+    EventHandler<AfterEvent<Event, State>, State> handler, {
+    HandlerPriority priority = HandlerPriority.medium,
+  }) {
+    on<AfterEvent<Event, State>>(handler);
+  }
+
   Future<void> close() async {
     await _eventController.close();
     await _stateController.close();
