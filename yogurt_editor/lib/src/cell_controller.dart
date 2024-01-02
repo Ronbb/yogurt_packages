@@ -59,6 +59,13 @@ class CellController extends EventBus<CellState> {
     update(state.copyWithPlugin(creator(state.plugins[T])));
   }
 
+  void depend<Event extends EventBase>(
+    EventHandler<DependencyEvent<Event, CellState>, CellState> handler, {
+    HandlerPriority priority = HandlerPriority.medium,
+  }) {
+    on<DependencyEvent<Event, CellState>>(handler);
+  }
+
   @override
   FutureOr<void> onAfterInvoke(EventBase event, CellState previous) async {
     if (event is DependencyEvent) {
