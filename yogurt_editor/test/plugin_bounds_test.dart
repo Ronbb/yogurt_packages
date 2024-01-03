@@ -18,7 +18,7 @@ void main() {
       expect(cell.state.plugin<Bounds>(), isNotNull);
     });
 
-    test('hi test', () async {
+    test('hit test', () async {
       final editor = EditorController(
         state: const EditorState(),
         root: TestCellModel.create({
