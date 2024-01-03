@@ -10,8 +10,12 @@ extension BoundsPosition on Bounds {
 class BoundsEvent extends EventBase with _$BoundsEvent {
   const BoundsEvent._();
 
-  const factory BoundsEvent.resize({
+  const factory BoundsEvent.resizeRelative({
     required Offset delta,
+  }) = ResizeRelativeEvent;
+
+  const factory BoundsEvent.resize({
+    required Size size,
   }) = ResizeEvent;
 
   const factory BoundsEvent.moveRelative({
@@ -46,9 +50,15 @@ class CellBoundsPlugin extends CellPluginBase {
       }));
     });
 
-    controller.on<ResizeEvent>((event, update) {
+    controller.on<ResizeRelativeEvent>((event, update) {
       update(controller.state.rebuildWithPlugin((Bounds bounds) {
         return bounds.position & (bounds.size + event.delta);
+      }));
+    });
+
+    controller.on<ResizeEvent>((event, update) {
+      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+        return bounds.position & event.size;
       }));
     });
 
@@ -87,4 +97,37 @@ extension BoundsHitTest on EditorController {
     }
     return result;
   }
+}
+
+extension CellMaybeBounds on CellController {
+  Bounds? get editorBounds {
+    if (!state.has<Bounds>()) {
+      return null;
+    }
+
+    var bounds = state.plugin<Bounds>();
+    visitAncestors((cell) {
+      if (!state.has<Bounds>()) {
+        return true;
+      }
+
+      bounds = bounds.shift(state.plugin<Bounds>().topLeft);
+
+      return true;
+    });
+
+    return bounds;
+  }
+
+  Bounds? get _bounds {
+    if (!state.has<Bounds>()) {
+      return null;
+    }
+
+    return state.plugin<Bounds>();
+  }
+
+  Offset? get center => _bounds?.center;
+
+  Offset? get position => _bounds?.position;
 }

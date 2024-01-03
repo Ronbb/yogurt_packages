@@ -47,11 +47,70 @@ class CellController extends EventBus<CellState> {
     return cell;
   }
 
-  void _addDependency(CellController cell) {
+  void visitAncestors(bool Function(CellController) vistor) {
+    var parent = this.parent;
+    while (parent != null) {
+      if (!vistor(parent)) {
+        return;
+      }
+
+      parent = parent.parent;
+    }
+  }
+
+  bool hasAncestor(dynamic id) {
+    var result = false;
+    visitAncestors((cell) {
+      if (cell.state.id == id) {
+        result = true;
+        return false;
+      }
+
+      return true;
+    });
+
+    return result;
+  }
+
+  void visitDescendants(bool Function(CellController) vistor) {
+    var children = this.children.value.values;
+    while (children.isNotEmpty) {
+      for (var child in children) {
+        if (!vistor(child)) {
+          return;
+        }
+      }
+
+      final newChildren = <CellController>[];
+      for (var child in children) {
+        newChildren.addAll(child.children.value.values);
+      }
+    }
+  }
+
+  CellController? findDescendant(dynamic id) {
+    final cell = editor.cells[id];
+    if (cell == null) {
+      return null;
+    }
+
+    return cell.hasAncestor(id) ? cell : null;
+  }
+
+  bool hasDescendant(dynamic id) {
+    final cell = editor.cells[id];
+    if (cell == null) {
+      return false;
+    }
+
+    return cell.hasAncestor(id);
+  }
+
+  void addDependency(CellController cell) {
     _dependencies[cell.state.id] = cell;
   }
 
-  void _removeDependency(CellController cell) {
+  void removeDependency(CellController cell) {
     _dependencies.remove(cell.state.id);
   }
 

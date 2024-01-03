@@ -76,13 +76,13 @@ void main() {
       expect(cell.state.plugin<Bounds>().position, const Offset(50, 50));
     });
 
-    test('resize', () async {
+    test('resize relatively', () async {
       final cell = editor.create(TestCellModel.create({
         Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
       }));
 
       final result = await cell.invoke(
-        const ResizeEvent(
+        const ResizeRelativeEvent(
           delta: Offset(50, 50),
         ),
       );

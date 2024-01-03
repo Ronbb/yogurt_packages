@@ -6,5 +6,6 @@ import 'package:yogurt_event_bus/yogurt_event_bus.dart';
 part 'bounds.dart';
 part 'cell_tree.dart';
 part 'dnd.dart';
+part 'path.dart';
 
 part 'plugins.freezed.dart';
