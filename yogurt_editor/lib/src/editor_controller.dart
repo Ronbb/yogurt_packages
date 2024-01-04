@@ -72,6 +72,16 @@ class EditorController extends EventBus<EditorState> {
     child.parent?._remove(child.state.id);
     parent._add(child);
   }
+
+  void createDependency(CellController depended, CellController depending) {
+    depended._addDependedCell(depending);
+    depending._addDependingCell(depended);
+  }
+
+  void removeDependency(CellController depended, CellController depending) {
+    depended._removeDependedCell(depending);
+    depending._removeDependingCell(depended);
+  }
 }
 
 abstract class EditorPluginBase extends PluginBase<EditorController> {

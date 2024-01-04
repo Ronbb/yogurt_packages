@@ -1,5 +1,11 @@
 part of 'editor_controller.dart';
 
+class _InvalidCellId {
+  const _InvalidCellId._();
+}
+
+const kInvalidCellId = _InvalidCellId._();
+
 @freezed
 class DependencyEvent<Event extends EventBase, State extends StateBase>
     extends EventBase with _$DependencyEvent<Event, State> {
@@ -28,7 +34,9 @@ class CellController extends EventBus<CellState> {
 
   final Map<dynamic, CellController> _children = {};
 
-  final Map<dynamic, CellController> _dependencies = {};
+  final Map<dynamic, CellController> _dependingCells = {};
+
+  final Map<dynamic, CellController> _dependedCells = {};
 
   late final children = UnmodifiedValueNotifier(UnmodifiableMapView(_children));
 
@@ -106,12 +114,20 @@ class CellController extends EventBus<CellState> {
     return cell.hasAncestor(id);
   }
 
-  void addDependency(CellController cell) {
-    _dependencies[cell.state.id] = cell;
+  void _addDependingCell(CellController cell) {
+    _dependingCells[cell.state.id] = cell;
   }
 
-  void removeDependency(CellController cell) {
-    _dependencies.remove(cell.state.id);
+  void _removeDependingCell(CellController cell) {
+    _dependingCells.remove(cell.state.id);
+  }
+
+  void _addDependedCell(CellController cell) {
+    _dependedCells[cell.state.id] = cell;
+  }
+
+  void _removeDependedCell(CellController cell) {
+    _dependedCells.remove(cell.state.id);
   }
 
   void initializePluginState<T>(T Function(T?) creator) {
@@ -133,8 +149,8 @@ class CellController extends EventBus<CellState> {
 
     await super.onAfterInvoke(event, previous);
 
-    for (var dependency in _dependencies.values) {
-      await dependency.invoke(
+    for (var dependedCell in _dependedCells.values) {
+      await dependedCell.invoke(
         DependencyEvent(
           previous: previous,
           current: state,
