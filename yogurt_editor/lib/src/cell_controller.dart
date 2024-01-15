@@ -142,7 +142,8 @@ class CellController extends EventBus<CellState> {
   }
 
   @override
-  FutureOr<void> onAfterInvoke(EventBase event, CellState previous) async {
+  FutureOr<void> onAfterInvoke<Event extends EventBase>(
+      Event event, CellState previous) async {
     if (event is DependencyEvent) {
       return;
     }

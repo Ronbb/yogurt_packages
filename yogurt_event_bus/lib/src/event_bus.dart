@@ -103,12 +103,15 @@ class EventBus<State extends StateBase> {
             return;
           }
 
-          bool hasError = false;
-
           try {
             for (var _EventHandler(:handler) in handlers) {
               await handler(event);
             }
+
+            if (!isClosed) {
+              await onAfterInvoke(event, previous);
+            }
+
             _eventCompleters[event]?.complete(InvokeResult.done(
               state: state,
             ));
@@ -118,12 +121,6 @@ class EventBus<State extends StateBase> {
               error: e,
               stackTrace: stackTrace,
             ));
-
-            hasError = true;
-          }
-
-          if (event is! AfterEvent && !isClosed && !hasError) {
-            await onAfterInvoke(event, previous);
           }
         },
       ).listen(null);
@@ -131,7 +128,12 @@ class EventBus<State extends StateBase> {
   }
 
   @mustCallSuper
-  FutureOr<void> onAfterInvoke(EventBase event, State previous) async {
+  FutureOr<void> onAfterInvoke<Event extends EventBase>(
+      Event event, State previous) async {
+    if (event is AfterEvent) {
+      return;
+    }
+
     await invoke(AfterEvent(
       current: state,
       previous: previous,

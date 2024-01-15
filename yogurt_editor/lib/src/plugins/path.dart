@@ -146,7 +146,5 @@ class CellPathPlugin extends CellPluginBase {
     controller.depend<ResizeRelativeEvent>((event, update) async {
       update(await _rebuild(controller));
     });
-
-    controller.invoke(const PathRebuildEvent());
   }
 }
