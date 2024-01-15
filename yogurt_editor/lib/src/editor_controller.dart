@@ -33,22 +33,32 @@ class EditorController extends EventBus<EditorState> {
   @override
   List<EditorPluginBase> get plugins => super.plugins.cast();
 
-  late final List<PluginBase<CellController>> _cellPlugins;
+  late final List<CellPluginBase> _cellPlugins;
 
-  CellController _create(CellState state) {
+  CellController _create(
+    CellState state, {
+    List<CellPluginBase> extraCellPlugins = const [],
+  }) {
     return CellController._(
       editor: this,
       state: state,
-      plugins: _cellPlugins,
+      plugins: [..._cellPlugins, ...extraCellPlugins],
     );
   }
 
-  CellController create(CellState state, {CellController? parent}) {
+  CellController create(
+    CellState state, {
+    CellController? parent,
+    List<CellPluginBase> extraCellPlugins = const [],
+  }) {
     if (_cells.containsKey(state.id)) {
       throw Exception('cell with id ${state.id} is existed');
     }
 
-    final cell = _create(state);
+    final cell = _create(
+      state,
+      extraCellPlugins: extraCellPlugins,
+    );
 
     _cells[state.id] = cell;
 

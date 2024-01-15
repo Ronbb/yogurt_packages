@@ -102,7 +102,7 @@ class CellController extends EventBus<CellState> {
       return null;
     }
 
-    return cell.hasAncestor(id) ? cell : null;
+    return cell.hasAncestor(state.id) ? cell : null;
   }
 
   bool hasDescendant(dynamic id) {
@@ -111,7 +111,7 @@ class CellController extends EventBus<CellState> {
       return false;
     }
 
-    return cell.hasAncestor(id);
+    return cell.hasAncestor(state.id);
   }
 
   void _addDependingCell(CellController cell) {

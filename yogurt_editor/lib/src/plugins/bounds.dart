@@ -107,11 +107,11 @@ extension CellMaybeBounds on CellController {
 
     var bounds = state.plugin<Bounds>();
     visitAncestors((cell) {
-      if (!state.has<Bounds>()) {
+      if (!cell.state.has<Bounds>()) {
         return true;
       }
 
-      bounds = bounds.shift(state.plugin<Bounds>().topLeft);
+      bounds = bounds.shift(cell.state.plugin<Bounds>().topLeft);
 
       return true;
     });

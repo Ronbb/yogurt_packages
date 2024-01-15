@@ -34,14 +34,19 @@ class CellPathPlugin extends CellPluginBase {
   }
 
   void _createDependency(CellController controller, dynamic id) {
-    var cell = controller.editor.cells[id];
-    final dependedCells = <CellController>[];
-    while (cell != null && cell != controller.parent) {
-      dependedCells.add(cell);
+    final cell = controller.editor.cells[id];
+    if (cell == null) {
+      return;
     }
-    for (var dependedCell in dependedCells) {
-      controller.editor.createDependency(dependedCell, controller);
-    }
+    controller.editor.createDependency(cell, controller);
+    cell.visitAncestors((cell) {
+      if (cell == controller.parent) {
+        return false;
+      }
+
+      controller.editor.createDependency(cell, controller);
+      return true;
+    });
   }
 
   Future<CellState> _rebuild(CellController controller) async {
@@ -54,9 +59,32 @@ class CellPathPlugin extends CellPluginBase {
     final target = parent?.findDescendant(edgePath.targetId);
     final points = <Offset?>[];
 
-    points.add(source?.center);
+    Offset? relativePosition(CellController? cell) {
+      if (cell == null) {
+        return null;
+      }
+
+      var position = cell.center ?? Offset.zero;
+
+      cell.visitAncestors((ancestor) {
+        if (ancestor == controller.parent) {
+          return false;
+        }
+
+        final ancestorPosition = ancestor.position;
+        if (ancestorPosition != null) {
+          position += ancestorPosition;
+        }
+
+        return true;
+      });
+
+      return position;
+    }
+
+    points.add(relativePosition(source));
     points.addAll(edgePath.waypoints);
-    points.add(target?.center);
+    points.add(relativePosition(target));
 
     final availablePoints = points.whereType<Offset>();
     if (availablePoints.isNotEmpty) {
@@ -91,14 +119,7 @@ class CellPathPlugin extends CellPluginBase {
           return const EdgePath();
         }
 
-        return edgePath.copyWith(
-          sourceId: _isAvailableTerminal(controller, edgePath.sourceId)
-              ? edgePath.sourceId
-              : kInvalidCellId,
-          targetId: _isAvailableTerminal(controller, edgePath.targetId)
-              ? edgePath.targetId
-              : kInvalidCellId,
-        );
+        return edgePath;
       },
     );
 
