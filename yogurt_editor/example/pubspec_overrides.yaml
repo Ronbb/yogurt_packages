@@ -1,0 +1,3 @@
+dependency_overrides:
+  yogurt_event_bus:
+    path: ../../yogurt_event_bus
