@@ -16,6 +16,7 @@ class EventBus<State extends StateBase> {
     List<PluginBase<EventBus<State>>> plugins = const [],
   })  : _state = state,
         _plugins = plugins {
+    _stateController.add(state);
     for (final plugin in _plugins) {
       plugin.onCreate(this);
     }
@@ -38,7 +39,7 @@ class EventBus<State extends StateBase> {
   State _state;
   State get state => _state;
 
-  Stream<StateBase> get stream => _stateController.stream;
+  Stream<State> get stream => _stateController.stream;
   bool get isClosed => _stateController.isClosed;
 
   @protected

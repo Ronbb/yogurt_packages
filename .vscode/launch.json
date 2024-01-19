@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "yogurt_editor example",
+      "cwd": "yogurt_editor\\example",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "yogurt_editor example (profile mode)",
+      "cwd": "yogurt_editor\\example",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "yogurt_editor example (release mode)",
+      "cwd": "yogurt_editor\\example",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    }
+  ]
+}

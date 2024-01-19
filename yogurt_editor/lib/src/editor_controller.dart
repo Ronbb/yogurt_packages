@@ -119,6 +119,11 @@ class StateWithPlugins extends StateBase with _$StateWithPlugins {
   }
 
   @useResult
+  T? maybePlugin<T>() {
+    return plugins[T];
+  }
+
+  @useResult
   bool has<T>() {
     return plugins.containsKey(T);
   }

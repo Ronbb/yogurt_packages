@@ -130,4 +130,6 @@ extension CellMaybeBounds on CellController {
   Offset? get center => _bounds?.center;
 
   Offset? get position => _bounds?.position;
+
+  Size? get size => _bounds?.size;
 }

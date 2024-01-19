@@ -92,7 +92,7 @@ class TestCellModel extends CellModelBase {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, CellState state) {
     return const SizedBox();
   }
 }

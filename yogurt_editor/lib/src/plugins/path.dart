@@ -29,9 +29,9 @@ class PathPlugin extends EditorPluginBase {
 class CellPathPlugin extends CellPluginBase {
   const CellPathPlugin();
 
-  bool _isAvailableTerminal(CellController controller, dynamic id) {
-    return controller.parent?.hasDescendant(id) ?? false;
-  }
+  // bool _isAvailableTerminal(CellController controller, dynamic id) {
+  //   return controller.parent?.hasDescendant(id) ?? false;
+  // }
 
   void _createDependency(CellController controller, dynamic id) {
     final cell = controller.editor.cells[id];
