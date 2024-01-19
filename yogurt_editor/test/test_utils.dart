@@ -79,7 +79,7 @@ class _HasNotified extends Matcher {
 class TestCellModel extends CellModelBase {
   const TestCellModel({
     this.plugins = const [],
-    this.builder = defaultBuilder,
+    this.builder,
   });
 
   static var id = 0;
@@ -87,11 +87,13 @@ class TestCellModel extends CellModelBase {
   static CellState create({
     Map<Type, dynamic> state = const {},
     List<CellPluginBase> plugins = const [],
+    Widget Function(BuildContext context, CellState state)? builder,
   }) {
     return CellState(
       id: id++,
       model: TestCellModel(
         plugins: plugins,
+        builder: builder,
       ),
       plugins: state,
     );
@@ -104,11 +106,11 @@ class TestCellModel extends CellModelBase {
   @override
   final List<CellPluginBase> plugins;
 
-  final Widget Function(BuildContext context, CellState state) builder;
+  final Widget Function(BuildContext context, CellState state)? builder;
 
   @override
   Widget build(BuildContext context, CellState state) {
-    return builder(context, state);
+    return (builder ?? defaultBuilder)(context, state);
   }
 }
 
@@ -118,11 +120,13 @@ extension TestEditorController on EditorController {
     List<CellPluginBase> plugins = const [],
     CellController? parent,
     List<CellPluginBase> extraPlugins = const [],
+    Widget Function(BuildContext context, CellState state)? builder,
   }) {
     return create(
       TestCellModel.create(
         state: state,
         plugins: plugins,
+        builder: builder,
       ),
       parent: parent,
       extraPlugins: extraPlugins,
