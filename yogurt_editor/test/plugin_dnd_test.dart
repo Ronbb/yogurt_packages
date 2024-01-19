@@ -8,16 +8,22 @@ void main() {
     final editor = EditorController(
       state: const EditorState(),
       root: TestCellModel.create(),
-      plugins: const [DragPlugin(), BoundsPlugin()],
     );
 
     test('initial', () async {
-      final cell = editor.create(TestCellModel.create());
+      final cell = editor.createTest(
+        plugins: const [DragPlugin()],
+      );
       expect(cell.state.plugin<Drag>(), isNotNull);
     });
 
     test('drag start', () async {
-      final cell = editor.create(TestCellModel.create());
+      final cell = editor.createTest(
+        plugins: const [
+          DragPlugin(),
+          BoundsPlugin(),
+        ],
+      );
 
       final result = await cell.invoke(const DragStartEvent());
 
@@ -33,7 +39,12 @@ void main() {
     });
 
     test('drag update', () async {
-      final cell = editor.create(TestCellModel.create());
+      final cell = editor.createTest(
+        plugins: const [
+          DragPlugin(),
+          BoundsPlugin(),
+        ],
+      );
 
       await cell.invoke(const DragStartEvent());
       final result = await cell.invoke(const DragUpdateEvent(
@@ -49,7 +60,12 @@ void main() {
     });
 
     test('drag complete', () async {
-      final cell = editor.create(TestCellModel.create());
+      final cell = editor.createTest(
+        plugins: const [
+          DragPlugin(),
+          BoundsPlugin(),
+        ],
+      );
 
       await cell.invoke(const DragStartEvent());
       await cell.invoke(const DragUpdateEvent(
@@ -67,7 +83,12 @@ void main() {
     });
 
     test('drag cancel', () async {
-      final cell = editor.create(TestCellModel.create());
+      final cell = editor.createTest(
+        plugins: const [
+          DragPlugin(),
+          BoundsPlugin(),
+        ],
+      );
 
       await cell.invoke(const DragStartEvent());
       await cell.invoke(const DragUpdateEvent(
@@ -87,20 +108,32 @@ void main() {
     test('drop', () async {
       final editor = EditorController(
         state: const EditorState(),
-        root: TestCellModel.create({
-          Bounds: const Bounds.fromLTWH(0, 0, 1000, 1000),
-        }),
-        plugins: const [DragPlugin(), BoundsPlugin()],
+        root: TestCellModel.create(
+          plugins: const [
+            DropPlugin(),
+          ],
+        ),
       );
 
-      final container = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
-      }));
+      final container = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
+        },
+        plugins: const [
+          DragPlugin(),
+          DropPlugin(),
+          BoundsPlugin(),
+        ],
+      );
 
-      final cell = editor.create(
-        TestCellModel.create({
+      final cell = editor.createTest(
+        state: {
           Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
-        }),
+        },
+        plugins: const [
+          DragPlugin(),
+          BoundsPlugin(),
+        ],
         parent: container,
       );
 
@@ -124,21 +157,32 @@ void main() {
     test('drop disable', () async {
       final editor = EditorController(
         state: const EditorState(),
-        root: TestCellModel.create({
-          Bounds: const Bounds.fromLTWH(0, 0, 1000, 1000),
-        }),
-        plugins: const [DragPlugin(), BoundsPlugin()],
+        root: TestCellModel.create(
+          plugins: const [
+            DropPlugin(),
+          ],
+        ),
       );
 
-      final container = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
-        Drop: const Drop.disabled(),
-      }));
+      final container = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
+          Drop: const Drop.disabled(),
+        },
+        plugins: const [
+          DropPlugin(),
+          BoundsPlugin(),
+        ],
+      );
 
-      final cell = editor.create(
-        TestCellModel.create({
+      final cell = editor.createTest(
+        state: {
           Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
-        }),
+        },
+        plugins: const [
+          DragPlugin(),
+          BoundsPlugin(),
+        ],
         parent: container,
       );
 
@@ -170,21 +214,32 @@ void main() {
     test('drop prevent', () async {
       final editor = EditorController(
         state: const EditorState(),
-        root: TestCellModel.create({
-          Bounds: const Bounds.fromLTWH(0, 0, 1000, 1000),
-        }),
-        plugins: const [DragPlugin(), BoundsPlugin()],
+        root: TestCellModel.create(
+          plugins: const [
+            DropPlugin(),
+          ],
+        ),
       );
 
-      final container = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
-        Drop: const Drop.ready(test: _AllPreventDropTest()),
-      }));
+      final container = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
+          Drop: const Drop.ready(test: _AllPreventDropTest()),
+        },
+        plugins: const [
+          DropPlugin(),
+          BoundsPlugin(),
+        ],
+      );
 
-      final cell = editor.create(
-        TestCellModel.create({
+      final cell = editor.createTest(
+        state: {
           Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
-        }),
+        },
+        plugins: const [
+          DragPlugin(),
+          BoundsPlugin(),
+        ],
         parent: container,
       );
 

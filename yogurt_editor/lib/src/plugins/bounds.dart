@@ -27,18 +27,8 @@ class BoundsEvent extends EventBase with _$BoundsEvent {
   }) = MoveEvent;
 }
 
-class BoundsPlugin extends EditorPluginBase {
+class BoundsPlugin extends CellPluginBase {
   const BoundsPlugin();
-
-  @override
-  final CellBoundsPlugin cell = const CellBoundsPlugin();
-
-  @override
-  void onCreate(EditorController controller) {}
-}
-
-class CellBoundsPlugin extends CellPluginBase {
-  const CellBoundsPlugin();
 
   @override
   void onCreate(CellController controller) {
@@ -70,32 +60,30 @@ class CellBoundsPlugin extends CellPluginBase {
   }
 }
 
-extension BoundsHitTest on EditorController {
+extension EditorHitTest on EditorController {
   @useResult
   CellController? hitTest(Offset position) {
-    CellController? result;
-    Iterable<CellController> cells = [root];
-    while (true) {
-      var hit = false;
-      for (var cell in cells) {
-        if (!cell.state.has<Bounds>()) {
-          continue;
-        }
+    return root.hitTest(position);
+  }
+}
 
-        final bounds = cell.state.plugin<Bounds>();
-        if (bounds.contains(position)) {
-          hit = true;
-          result = cell;
-          cells = cell.children.value.values;
-          break;
+extension CellHitTest on CellController {
+  @useResult
+  CellController? hitTest(Offset position) {
+    if (_maybeBounds?.contains(position) ?? true) {
+      for (var child in children.value.values) {
+        final result = child.hitTest(position - (maybePosition ?? Offset.zero));
+        if (result != null) {
+          return result;
         }
       }
 
-      if (!hit) {
-        break;
+      if (_maybeBounds != null) {
+        return this;
       }
     }
-    return result;
+
+    return null;
   }
 }
 
@@ -119,7 +107,7 @@ extension CellMaybeBounds on CellController {
     return bounds;
   }
 
-  Bounds? get _bounds {
+  Bounds? get _maybeBounds {
     if (!state.has<Bounds>()) {
       return null;
     }
@@ -127,9 +115,9 @@ extension CellMaybeBounds on CellController {
     return state.plugin<Bounds>();
   }
 
-  Offset? get center => _bounds?.center;
+  Offset? get maybeCenter => _maybeBounds?.center;
 
-  Offset? get position => _bounds?.position;
+  Offset? get maybePosition => _maybeBounds?.position;
 
-  Size? get size => _bounds?.size;
+  Size? get maybeSize => _maybeBounds?.size;
 }

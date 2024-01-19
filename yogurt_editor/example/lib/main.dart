@@ -44,9 +44,6 @@ class _ExampleState extends State<Example> {
           },
         ),
       ),
-      plugins: const [
-        BoundsPlugin(),
-      ],
     );
 
     controller.create(CellState(

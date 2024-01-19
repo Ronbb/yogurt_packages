@@ -10,31 +10,33 @@ void main() {
     final editor = EditorController(
       state: const EditorState(),
       root: TestCellModel.create(),
-      plugins: const [BoundsPlugin()],
     );
 
     test('initial', () async {
-      final cell = editor.create(TestCellModel.create());
+      final cell = editor.createTest(
+        plugins: const [BoundsPlugin()],
+      );
       expect(cell.state.plugin<Bounds>(), isNotNull);
     });
 
     test('hit test', () async {
       final editor = EditorController(
         state: const EditorState(),
-        root: TestCellModel.create({
-          Bounds: const Bounds.fromLTWH(0, 0, 1000, 1000),
-        }),
+        root: TestCellModel.create(),
+      );
+
+      final cell1 = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(0, 0, 200, 200),
+        },
         plugins: const [BoundsPlugin()],
       );
 
-      final cell1 = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(0, 0, 200, 200),
-      }));
-
-      final cell2 = editor.create(
-        TestCellModel.create({
+      final cell2 = editor.createTest(
+        state: {
           Bounds: const Bounds.fromLTWH(50, 50, 100, 100),
-        }),
+        },
+        plugins: const [BoundsPlugin()],
         parent: cell1,
       );
 
@@ -45,13 +47,16 @@ void main() {
       expect(result2, cell1);
 
       final result3 = editor.hitTest(const Offset(300, 300));
-      expect(result3, editor.root);
+      expect(result3, null);
     });
 
     test('move relatively', () async {
-      final cell = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
-      }));
+      final cell = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+        },
+        plugins: const [BoundsPlugin()],
+      );
 
       final result = await cell.invoke(
         const MoveRelativeEvent(
@@ -63,9 +68,12 @@ void main() {
     });
 
     test('move', () async {
-      final cell = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
-      }));
+      final cell = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+        },
+        plugins: const [BoundsPlugin()],
+      );
 
       final result = await cell.invoke(
         const MoveEvent(
@@ -77,9 +85,12 @@ void main() {
     });
 
     test('resize relatively', () async {
-      final cell = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
-      }));
+      final cell = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+        },
+        plugins: const [BoundsPlugin()],
+      );
 
       final result = await cell.invoke(
         const ResizeRelativeEvent(

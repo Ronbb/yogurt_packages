@@ -166,6 +166,11 @@ class CellController extends EventBus<CellState> {
     children.dispose();
     return super.close();
   }
+
+  @override
+  String toString() {
+    return '<Cell ${state.id}>';
+  }
 }
 
 typedef CellPluginBase = PluginBase<CellController>;

@@ -16,10 +16,6 @@ class EditorController extends EventBus<EditorState> {
     super.state = const EditorState(),
     List<EditorPluginBase> plugins = const [],
   }) : super(plugins: plugins) {
-    _cellPlugins = plugins
-        .map((e) => e.cell)
-        .whereType<PluginBase<CellController>>()
-        .toList();
     this.root = _create(root);
     _cells[root.id] = this.root;
   }
@@ -33,23 +29,33 @@ class EditorController extends EventBus<EditorState> {
   @override
   List<EditorPluginBase> get plugins => super.plugins.cast();
 
-  late final List<CellPluginBase> _cellPlugins;
-
   CellController _create(
     CellState state, {
     List<CellPluginBase> extraCellPlugins = const [],
   }) {
+    final pluginTypes = <Type>{};
+    final plugins = <CellPluginBase>[];
+
+    for (var plugin in [...state.model.plugins, ...extraCellPlugins].reversed) {
+      if (pluginTypes.contains(plugin.runtimeType)) {
+        continue;
+      }
+
+      pluginTypes.add(plugin.runtimeType);
+      plugins.add(plugin);
+    }
+
     return CellController._(
       editor: this,
       state: state,
-      plugins: [..._cellPlugins, ...extraCellPlugins],
+      plugins: plugins.reversed.toList(),
     );
   }
 
   CellController create(
     CellState state, {
     CellController? parent,
-    List<CellPluginBase> extraCellPlugins = const [],
+    List<CellPluginBase> extraPlugins = const [],
   }) {
     if (_cells.containsKey(state.id)) {
       throw Exception('cell with id ${state.id} is existed');
@@ -57,7 +63,7 @@ class EditorController extends EventBus<EditorState> {
 
     final cell = _create(
       state,
-      extraCellPlugins: extraCellPlugins,
+      extraCellPlugins: extraPlugins,
     );
 
     _cells[state.id] = cell;

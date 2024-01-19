@@ -8,38 +8,45 @@ void main() {
     final editor = EditorController(
       state: const EditorState(),
       root: TestCellModel.create(),
-      plugins: const [BoundsPlugin()],
     );
 
     test('rebuild', () async {
-      final cell1 = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(0, 0, 100, 100),
-      }));
-      final connector1 = editor.create(
-        TestCellModel.create({
+      final cell1 = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(0, 0, 100, 100),
+        },
+        plugins: const [BoundsPlugin()],
+      );
+      final connector1 = editor.createTest(
+        state: {
           Bounds: const Bounds.fromLTWH(10, 10, 10, 10),
-        }),
+        },
+        plugins: const [BoundsPlugin()],
         parent: cell1,
       );
 
-      final cell2 = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(200, 0, 100, 100),
-      }));
-      final connector2 = editor.create(
-        TestCellModel.create({
+      final cell2 = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(200, 0, 100, 100),
+        },
+        plugins: const [BoundsPlugin()],
+      );
+      final connector2 = editor.createTest(
+        state: {
           Bounds: const Bounds.fromLTWH(10, 10, 10, 10),
-        }),
+        },
+        plugins: const [BoundsPlugin()],
         parent: cell2,
       );
 
-      final edge = editor.create(
-        TestCellModel.create({
+      final edge = editor.createTest(
+        state: {
           EdgePath: EdgePath(
             sourceId: connector1.state.id,
             targetId: connector2.state.id,
           ),
-        }),
-        extraCellPlugins: const [CellPathPlugin()],
+        },
+        extraPlugins: const [PathPlugin()],
       );
 
       {
@@ -62,34 +69,42 @@ void main() {
     });
 
     test('auto-rebuild', () async {
-      final cell1 = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(0, 0, 100, 100),
-      }));
-      final connector1 = editor.create(
-        TestCellModel.create({
+      final cell1 = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(0, 0, 100, 100),
+        },
+        plugins: const [BoundsPlugin()],
+      );
+      final connector1 = editor.createTest(
+        state: {
           Bounds: const Bounds.fromLTWH(10, 10, 10, 10),
-        }),
+        },
+        plugins: const [BoundsPlugin()],
         parent: cell1,
       );
 
-      final cell2 = editor.create(TestCellModel.create({
-        Bounds: const Bounds.fromLTWH(200, 0, 100, 100),
-      }));
-      final connector2 = editor.create(
-        TestCellModel.create({
+      final cell2 = editor.createTest(
+        state: {
+          Bounds: const Bounds.fromLTWH(200, 0, 100, 100),
+        },
+        plugins: const [BoundsPlugin()],
+      );
+      final connector2 = editor.createTest(
+        state: {
           Bounds: const Bounds.fromLTWH(10, 10, 10, 10),
-        }),
+        },
+        plugins: const [BoundsPlugin()],
         parent: cell2,
       );
 
-      final edge = editor.create(
-        TestCellModel.create({
+      final edge = editor.createTest(
+        state: {
           EdgePath: EdgePath(
             sourceId: connector1.state.id,
             targetId: connector2.state.id,
           ),
-        }),
-        extraCellPlugins: const [CellPathPlugin()],
+        },
+        extraPlugins: const [PathPlugin()],
       );
 
       {

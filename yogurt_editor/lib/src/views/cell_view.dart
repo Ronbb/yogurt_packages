@@ -128,10 +128,10 @@ class RenderCellContainer extends RenderBox
 
   @override
   void performLayout() {
-    cellParentData?.offset = controller.position ?? Offset.zero;
+    cellParentData?.offset = controller.maybePosition ?? Offset.zero;
 
-    if (controller.size != null) {
-      size = controller.size!;
+    if (controller.maybeSize != null) {
+      size = controller.maybeSize!;
       visitChildren((child) {
         child.layout(
           child is RenderCellContainer
@@ -140,7 +140,7 @@ class RenderCellContainer extends RenderBox
         );
       });
     } else {
-      var size = controller.size ?? Size.zero;
+      var size = controller.maybeSize ?? Size.zero;
 
       visitChildren((child) {
         child.layout(

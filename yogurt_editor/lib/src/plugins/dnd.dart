@@ -53,27 +53,24 @@ class DragEvent extends EventBase with _$DragEvent {
   const factory DragEvent.cancel() = DragCancelEvent;
 }
 
-class DragPlugin extends EditorPluginBase {
-  const DragPlugin();
+class DropPlugin extends CellPluginBase {
+  const DropPlugin();
 
   @override
-  final CellDragPlugin cell = const CellDragPlugin();
-
-  @override
-  void onCreate(EditorController controller) {}
+  void onCreate(CellController controller) {
+    controller.initializePluginState<Drop>(
+      (drop) => drop ?? const Drop.ready(),
+    );
+  }
 }
 
-class CellDragPlugin extends CellPluginBase {
-  const CellDragPlugin();
+class DragPlugin extends CellPluginBase {
+  const DragPlugin();
 
   @override
   void onCreate(CellController controller) {
     controller.initializePluginState<Drag>(
       (drag) => drag ?? const Drag.ready(),
-    );
-
-    controller.initializePluginState<Drop>(
-      (drop) => drop ?? const Drop.ready(),
     );
 
     controller.on<DragStartEvent>((event, update) {
@@ -96,16 +93,22 @@ class CellDragPlugin extends CellPluginBase {
         ));
 
         if (result is InvokeDone) {
-          final hitTest = controller.editor.hitTest(
-            result.state.plugin<Bounds>().position,
-          );
+          final hitTestResult = controller.editor.hitTest(
+                result.state.plugin<Bounds>().position,
+              ) ??
+              controller.editor.root;
 
-          if (hitTest != controller) {
-            assert(true, 'maybe not move');
+          var newParent = hitTestResult == controller
+              ? hitTestResult.parent
+              : hitTestResult;
+          while (newParent != null) {
+            if (!newParent.state.has<Drop>()) {
+              newParent = newParent.parent;
+            } else {
+              break;
+            }
           }
-
-          final newParent = hitTest == controller ? hitTest?.parent : hitTest;
-          if (newParent == null || !newParent.state.has<Drop>()) {
+          if (newParent == null) {
             return;
           }
 

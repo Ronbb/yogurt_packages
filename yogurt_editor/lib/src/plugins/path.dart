@@ -19,15 +19,8 @@ class EdgePath with _$EdgePath {
   }) = _EdgePath;
 }
 
-class PathPlugin extends EditorPluginBase {
+class PathPlugin extends CellPluginBase {
   const PathPlugin();
-
-  @override
-  void onCreate(EditorController controller) {}
-}
-
-class CellPathPlugin extends CellPluginBase {
-  const CellPathPlugin();
 
   // bool _isAvailableTerminal(CellController controller, dynamic id) {
   //   return controller.parent?.hasDescendant(id) ?? false;
@@ -64,14 +57,14 @@ class CellPathPlugin extends CellPluginBase {
         return null;
       }
 
-      var position = cell.center ?? Offset.zero;
+      var position = cell.maybeCenter ?? Offset.zero;
 
       cell.visitAncestors((ancestor) {
         if (ancestor == controller.parent) {
           return false;
         }
 
-        final ancestorPosition = ancestor.position;
+        final ancestorPosition = ancestor.maybePosition;
         if (ancestorPosition != null) {
           position += ancestorPosition;
         }
