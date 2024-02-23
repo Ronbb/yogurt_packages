@@ -1,0 +1,5 @@
+dependency_overrides:
+  yogurt_event_bus:
+    path: ../yogurt_event_bus
+  yogurt_editor:
+    path: ../yogurt_editor
