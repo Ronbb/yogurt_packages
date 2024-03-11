@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:yogurt_editor/yogurt_editor.dart';
 
@@ -50,7 +52,12 @@ class _ExampleState extends State<Example> {
       id: _id(),
       model: const NodeModel(),
       plugins: const {
-        Bounds: Bounds.fromLTWH(100, 100, 100, 100),
+        Bounds: Bounds.fixed(
+          left: 100,
+          top: 100,
+          width: 100,
+          height: 100,
+        ),
       },
     ));
 
@@ -58,9 +65,34 @@ class _ExampleState extends State<Example> {
       id: _id(),
       model: const NodeModel(),
       plugins: const {
-        Bounds: Bounds.fromLTWH(250, 150, 100, 100),
+        Bounds: Bounds.fixed(
+          left: 250,
+          top: 150,
+          width: 100,
+          height: 100,
+        ),
       },
     ));
+
+    controller.create(
+      CellState(
+        id: _id(),
+        model: const NodeModel(),
+        plugins: const {
+          String: 'inner text',
+          Bounds: Bounds.intrinsic(
+            top: 300,
+            left: 300,
+            delegate: IntrinsicBounds(),
+          ),
+        },
+      ),
+      extraPlugins: [
+        const IntrinsicBoundsPlugin(
+          delegate: IntrinsicBounds(),
+        )
+      ],
+    );
   }
 
   @override
@@ -82,8 +114,35 @@ class NodeModel extends CellModelBase {
 
   @override
   Widget build(BuildContext context, CellState state) {
-    return const ColoredBox(
+    return ColoredBox(
       color: Colors.blue,
+      child: state.plugins.containsKey(String)
+          ? Text(
+              state.plugin(),
+            )
+          : null,
     );
+  }
+}
+
+class IntrinsicBounds extends IntrinsicBoundsDelegate {
+  const IntrinsicBounds();
+
+  @override
+  Size computeDryLayout(CellController controller) {
+    final builder = ui.ParagraphBuilder(ui.ParagraphStyle(
+      fontSize: 14,
+    ));
+
+    builder.pushStyle(ui.TextStyle());
+    builder.addText(controller.state.plugin<String>());
+
+    final paragraph = builder.build();
+
+    paragraph.layout(const ui.ParagraphConstraints(
+      width: 120,
+    ));
+
+    return Size(paragraph.width, paragraph.height);
   }
 }

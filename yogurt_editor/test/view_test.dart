@@ -13,7 +13,12 @@ void main() {
 
       final cell = editor.createTest(
         state: const {
-          Bounds: Bounds.fromLTWH(100, 100, 100, 100),
+          Bounds: Bounds.fixed(
+            left: 100,
+            top: 100,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [
           BoundsPlugin(),

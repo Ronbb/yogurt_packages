@@ -91,7 +91,7 @@ class PathPlugin extends CellPluginBase {
 
     final bounds = path.getBounds();
     await controller.invoke(MoveEvent(
-      position: bounds.position,
+      position: bounds.topLeft,
     ));
     await controller.invoke(ResizeEvent(
       size: bounds.size,

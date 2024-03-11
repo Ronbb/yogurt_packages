@@ -13,13 +13,23 @@ void main() {
     test('rebuild', () async {
       final cell1 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(0, 0, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 0,
+            top: 0,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [BoundsPlugin()],
       );
       final connector1 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(10, 10, 10, 10),
+          Bounds: const Bounds.fixed(
+            left: 10,
+            top: 10,
+            width: 10,
+            height: 10,
+          ),
         },
         plugins: const [BoundsPlugin()],
         parent: cell1,
@@ -27,13 +37,23 @@ void main() {
 
       final cell2 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(200, 0, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 200,
+            top: 0,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [BoundsPlugin()],
       );
       final connector2 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(10, 10, 10, 10),
+          Bounds: const Bounds.fixed(
+            left: 10,
+            top: 10,
+            width: 10,
+            height: 10,
+          ),
         },
         plugins: const [BoundsPlugin()],
         parent: cell2,
@@ -71,13 +91,23 @@ void main() {
     test('auto-rebuild', () async {
       final cell1 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(0, 0, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 0,
+            top: 0,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [BoundsPlugin()],
       );
       final connector1 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(10, 10, 10, 10),
+          Bounds: const Bounds.fixed(
+            left: 10,
+            top: 10,
+            width: 10,
+            height: 10,
+          ),
         },
         plugins: const [BoundsPlugin()],
         parent: cell1,
@@ -85,13 +115,23 @@ void main() {
 
       final cell2 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(200, 0, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 200,
+            top: 0,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [BoundsPlugin()],
       );
       final connector2 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(10, 10, 10, 10),
+          Bounds: const Bounds.fixed(
+            left: 10,
+            top: 10,
+            width: 10,
+            height: 10,
+          ),
         },
         plugins: const [BoundsPlugin()],
         parent: cell2,

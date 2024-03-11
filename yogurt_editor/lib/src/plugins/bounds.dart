@@ -1,9 +1,57 @@
 part of 'plugins.dart';
 
-typedef Bounds = Rect;
+@freezed
+class Bounds with _$Bounds {
+  const Bounds._();
 
-extension BoundsPosition on Bounds {
-  Offset get position => topLeft;
+  const factory Bounds.fixed({
+    @Default(0) double left,
+    @Default(0) double top,
+    @Default(0) double width,
+    @Default(0) double height,
+  }) = FixedBounds;
+
+  const factory Bounds.intrinsic({
+    @Default(0) double left,
+    @Default(0) double top,
+    @Default(0) double width,
+    @Default(0) double height,
+    required IntrinsicBoundsDelegate delegate,
+  }) = IntrinsicBounds;
+
+  Offset get position => Offset(left, top);
+
+  Size get size => Size(width, height);
+
+  Offset get center => Offset(left + width / 2, top + height / 2);
+
+  bool contains(Offset offset) {
+    return offset.dx >= left &&
+        offset.dx < left + width &&
+        offset.dy >= top &&
+        offset.dy < top + height;
+  }
+
+  Rect toRect() {
+    return Rect.fromLTWH(left, top, width, height);
+  }
+
+  bool get isFixed => maybeMap(
+        fixed: (value) => true,
+        orElse: () => false,
+      );
+
+  bool get isIntrinsic => maybeMap(
+        intrinsic: (value) => true,
+        orElse: () => false,
+      );
+}
+
+@immutable
+abstract class IntrinsicBoundsDelegate {
+  const IntrinsicBoundsDelegate();
+
+  Size computeDryLayout(CellController controller);
 }
 
 @freezed
@@ -25,6 +73,85 @@ class BoundsEvent extends EventBase with _$BoundsEvent {
   const factory BoundsEvent.move({
     required Offset position,
   }) = MoveEvent;
+
+  const factory BoundsEvent.layout() = LayoutEvent;
+}
+
+class IntrinsicBoundsPlugin extends CellPluginBase {
+  const IntrinsicBoundsPlugin({
+    required this.delegate,
+  });
+
+  final IntrinsicBoundsDelegate delegate;
+
+  @override
+  void onCreate(CellController controller) {
+    controller.initializePluginState<Bounds>(
+      (bounds) {
+        bounds ??= IntrinsicBounds(delegate: delegate);
+
+        final size = bounds.maybeMap(
+          orElse: () => null,
+          intrinsic: (value) {
+            return value.delegate.computeDryLayout(controller);
+          },
+        );
+
+        if (size == null) {
+          throw Exception(
+            "cell ${controller.state.id} do not have an IntrinsicBounds",
+          );
+        }
+
+        bounds = bounds.copyWith(
+          width: size.width,
+          height: size.height,
+        );
+
+        return bounds;
+      },
+    );
+
+    controller.on<MoveEvent>((event, update) {
+      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+        return bounds.copyWith(
+          left: event.position.dx,
+          top: event.position.dy,
+        );
+      }));
+    });
+
+    controller.on<MoveRelativeEvent>((event, update) {
+      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+        return bounds.copyWith(
+          left: bounds.left + event.delta.dx,
+          top: bounds.top + event.delta.dy,
+        );
+      }));
+    });
+
+    controller.on<LayoutEvent>((event, update) {
+      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+        final size = bounds.maybeMap(
+          orElse: () => null,
+          intrinsic: (value) {
+            return value.delegate.computeDryLayout(controller);
+          },
+        );
+
+        if (size == null) {
+          throw Exception(
+            "cell ${controller.state.id} do not have an IntrinsicBounds",
+          );
+        }
+
+        return bounds.copyWith(
+          width: size.width,
+          height: size.height,
+        );
+      }));
+    });
+  }
 }
 
 class BoundsPlugin extends CellPluginBase {
@@ -32,29 +159,43 @@ class BoundsPlugin extends CellPluginBase {
 
   @override
   void onCreate(CellController controller) {
-    controller.initializePluginState<Bounds>((bounds) => bounds ?? Bounds.zero);
+    controller.initializePluginState<Bounds>(
+      (bounds) => bounds ?? const FixedBounds(),
+    );
 
-    controller.on<MoveRelativeEvent>((event, update) {
+    controller.on<MoveEvent>((event, update) {
       update(controller.state.rebuildWithPlugin((Bounds bounds) {
-        return bounds.shift(event.delta);
+        return bounds.copyWith(
+          left: event.position.dx,
+          top: event.position.dy,
+        );
       }));
     });
 
-    controller.on<ResizeRelativeEvent>((event, update) {
+    controller.on<MoveRelativeEvent>((event, update) {
       update(controller.state.rebuildWithPlugin((Bounds bounds) {
-        return bounds.position & (bounds.size + event.delta);
+        return bounds.copyWith(
+          left: bounds.left + event.delta.dx,
+          top: bounds.top + event.delta.dy,
+        );
       }));
     });
 
     controller.on<ResizeEvent>((event, update) {
       update(controller.state.rebuildWithPlugin((Bounds bounds) {
-        return bounds.position & event.size;
+        return bounds.copyWith(
+          width: event.size.width,
+          height: event.size.height,
+        );
       }));
     });
 
-    controller.on<MoveEvent>((event, update) {
+    controller.on<ResizeRelativeEvent>((event, update) {
       update(controller.state.rebuildWithPlugin((Bounds bounds) {
-        return event.position & bounds.size;
+        return bounds.copyWith(
+          width: bounds.width + event.delta.dx,
+          height: bounds.height + event.delta.dy,
+        );
       }));
     });
   }
@@ -99,7 +240,12 @@ extension CellMaybeBounds on CellController {
         return true;
       }
 
-      bounds = bounds.shift(cell.state.plugin<Bounds>().topLeft);
+      final cellBounds = cell.state.plugin<Bounds>();
+
+      bounds = bounds.copyWith(
+        top: bounds.top + cellBounds.top,
+        left: bounds.left + cellBounds.left,
+      );
 
       return true;
     });

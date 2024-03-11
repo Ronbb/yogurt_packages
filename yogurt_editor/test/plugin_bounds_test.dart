@@ -27,14 +27,24 @@ void main() {
 
       final cell1 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(0, 0, 200, 200),
+          Bounds: const Bounds.fixed(
+            left: 0,
+            top: 0,
+            width: 200,
+            height: 200,
+          ),
         },
         plugins: const [BoundsPlugin()],
       );
 
       final cell2 = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(50, 50, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 50,
+            top: 50,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [BoundsPlugin()],
         parent: cell1,
@@ -53,7 +63,12 @@ void main() {
     test('move relatively', () async {
       final cell = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 100,
+            top: 100,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [BoundsPlugin()],
       );
@@ -70,7 +85,12 @@ void main() {
     test('move', () async {
       final cell = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 100,
+            top: 100,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [BoundsPlugin()],
       );
@@ -87,7 +107,12 @@ void main() {
     test('resize relatively', () async {
       final cell = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 100,
+            top: 100,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [BoundsPlugin()],
       );

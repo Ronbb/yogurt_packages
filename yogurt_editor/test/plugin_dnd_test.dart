@@ -117,7 +117,12 @@ void main() {
 
       final container = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
+          Bounds: const Bounds.fixed(
+            left: 0,
+            top: 0,
+            width: 400,
+            height: 400,
+          ),
         },
         plugins: const [
           DragPlugin(),
@@ -128,7 +133,12 @@ void main() {
 
       final cell = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 100,
+            top: 100,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [
           DragPlugin(),
@@ -166,7 +176,12 @@ void main() {
 
       final container = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
+          Bounds: const Bounds.fixed(
+            left: 0,
+            top: 0,
+            width: 400,
+            height: 400,
+          ),
           Drop: const Drop.disabled(),
         },
         plugins: const [
@@ -177,7 +192,12 @@ void main() {
 
       final cell = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 100,
+            top: 100,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [
           DragPlugin(),
@@ -223,7 +243,12 @@ void main() {
 
       final container = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(0, 0, 400, 400),
+          Bounds: const Bounds.fixed(
+            left: 0,
+            top: 0,
+            width: 400,
+            height: 400,
+          ),
           Drop: const Drop.ready(test: _AllPreventDropTest()),
         },
         plugins: const [
@@ -234,7 +259,12 @@ void main() {
 
       final cell = editor.createTest(
         state: {
-          Bounds: const Bounds.fromLTWH(100, 100, 100, 100),
+          Bounds: const Bounds.fixed(
+            left: 100,
+            top: 100,
+            width: 100,
+            height: 100,
+          ),
         },
         plugins: const [
           DragPlugin(),
