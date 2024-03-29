@@ -74,11 +74,11 @@ class DragPlugin extends CellPluginBase {
     );
 
     controller.on<DragStartEvent>((event, update) {
-      update(controller.state.rebuildWithPlugin((Drag drag) {
+      update(controller.state.rebuild((Drag drag) {
         return drag.maybeWhen(
           orElse: () => drag,
           ready: () => Drag.dragging(
-            initialPosition: controller.state.plugin<Bounds>().position,
+            initialPosition: controller.state<Bounds>().position,
             initialParentId: controller.parent?.state.id,
           ),
         );
@@ -86,7 +86,7 @@ class DragPlugin extends CellPluginBase {
     });
 
     controller.on<DragUpdateEvent>((event, update) async {
-      final drag = controller.state.plugin<Drag>();
+      final drag = controller.state<Drag>();
       if (drag is Dragging) {
         final result = await controller.invoke(MoveRelativeEvent(
           delta: event.delta,
@@ -94,7 +94,7 @@ class DragPlugin extends CellPluginBase {
 
         if (result is InvokeDone) {
           final hitTestResult = controller.editor.hitTest(
-                result.state.plugin<Bounds>().position,
+                result.state<Bounds>().position,
               ) ??
               controller.editor.root;
 
@@ -112,7 +112,7 @@ class DragPlugin extends CellPluginBase {
             return;
           }
 
-          final drop = newParent.state.plugin<Drop>();
+          final drop = newParent.state<Drop>();
           if (drop is! DropReady || !drop.test(newParent, controller)) {
             return;
           }
@@ -123,7 +123,7 @@ class DragPlugin extends CellPluginBase {
     });
 
     controller.on<DragCompleteEvent>((event, update) {
-      update(controller.state.rebuildWithPlugin((Drag drag) {
+      update(controller.state.rebuild((Drag drag) {
         return drag.maybeMap(
           orElse: () => drag,
           dragging: (_) => const Drag.ready(),
@@ -132,12 +132,12 @@ class DragPlugin extends CellPluginBase {
     });
 
     controller.on<DragCancelEvent>((event, update) async {
-      final drag = controller.state.plugin<Drag>();
+      final drag = controller.state<Drag>();
       if (drag is Dragging) {
         await controller.invoke(MoveEvent(
           position: drag.initialPosition,
         ));
-        update(controller.state.copyWithPlugin(const Drag.ready()));
+        update(controller.state.update(const Drag.ready()));
         controller.editor.reattach(
           controller.editor.cells[drag.initialParentId]!,
           controller,

@@ -43,7 +43,7 @@ class PathPlugin extends CellPluginBase {
   }
 
   Future<CellState> _rebuild(CellController controller) async {
-    final edgePath = controller.state.plugin<EdgePath>();
+    final edgePath = controller.state<EdgePath>();
 
     final path = Path();
 
@@ -97,7 +97,7 @@ class PathPlugin extends CellPluginBase {
       size: bounds.size,
     ));
 
-    return controller.state.rebuildWithPlugin((EdgePath edgePath) {
+    return controller.state.rebuild((EdgePath edgePath) {
       return edgePath.copyWith(
         path: path,
       );
@@ -116,7 +116,7 @@ class PathPlugin extends CellPluginBase {
       },
     );
 
-    final initialEdgePath = controller.state.plugin<EdgePath>();
+    final initialEdgePath = controller.state<EdgePath>();
     _createDependency(controller, initialEdgePath.sourceId);
     _createDependency(controller, initialEdgePath.targetId);
 

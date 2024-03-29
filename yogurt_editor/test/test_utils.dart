@@ -95,7 +95,7 @@ class TestCellModel extends CellModelBase {
         plugins: plugins,
         builder: builder,
       ),
-      plugins: state,
+      all: state,
     );
   }
 

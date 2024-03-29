@@ -39,7 +39,7 @@ void main() {
       expect(renderObject, isA<RenderBox>());
 
       final size = (renderObject as RenderBox).size;
-      expect(size, cell.state.plugin<Bounds>().size);
+      expect(size, cell.state<Bounds>().size);
     });
   });
 }

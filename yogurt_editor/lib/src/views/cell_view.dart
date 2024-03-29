@@ -109,7 +109,7 @@ class RenderCellContainer extends RenderBox
       return;
     }
 
-    final bounds = state.maybePlugin<Bounds>();
+    final bounds = state.maybe<Bounds>();
     if (_lastBounds != bounds) {
       _lastBounds = bounds;
       markNeedsLayout();

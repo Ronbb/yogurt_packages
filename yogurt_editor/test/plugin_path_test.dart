@@ -73,7 +73,7 @@ void main() {
         final result = await edge.invoke(const PathRebuildEvent());
         expect(result, isA<InvokeDone>());
 
-        final path = result.state.plugin<EdgePath>().path;
+        final path = result.state<EdgePath>().path;
         expect(path, isNotNull);
 
         expect(
@@ -151,7 +151,7 @@ void main() {
         final result = await edge.invoke(const PathRebuildEvent());
         expect(result, isA<InvokeDone>());
 
-        final path = edge.state.plugin<EdgePath>().path;
+        final path = edge.state<EdgePath>().path;
         expect(path, isNotNull);
 
         expect(
@@ -170,7 +170,7 @@ void main() {
           delta: Offset(320, 480),
         ));
 
-        final path = edge.state.plugin<EdgePath>().path;
+        final path = edge.state<EdgePath>().path;
         expect(path, isNotNull);
 
         expect(

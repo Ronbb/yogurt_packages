@@ -51,7 +51,7 @@ class _ExampleState extends State<Example> {
     controller.create(CellState(
       id: _id(),
       model: const NodeModel(),
-      plugins: const {
+      all: const {
         Bounds: Bounds.fixed(
           left: 100,
           top: 100,
@@ -64,7 +64,7 @@ class _ExampleState extends State<Example> {
     controller.create(CellState(
       id: _id(),
       model: const NodeModel(),
-      plugins: const {
+      all: const {
         Bounds: Bounds.fixed(
           left: 250,
           top: 150,
@@ -78,7 +78,7 @@ class _ExampleState extends State<Example> {
       CellState(
         id: _id(),
         model: const NodeModel(),
-        plugins: const {
+        all: const {
           String: 'inner text',
           Bounds: Bounds.intrinsic(
             top: 300,
@@ -116,11 +116,7 @@ class NodeModel extends CellModelBase {
   Widget build(BuildContext context, CellState state) {
     return ColoredBox(
       color: Colors.blue,
-      child: state.plugins.containsKey(String)
-          ? Text(
-              state.plugin(),
-            )
-          : null,
+      child: state.has<String>() ? Text(state()) : null,
     );
   }
 }
@@ -135,7 +131,7 @@ class IntrinsicBounds extends IntrinsicBoundsDelegate {
     ));
 
     builder.pushStyle(ui.TextStyle());
-    builder.addText(controller.state.plugin<String>());
+    builder.addText(controller.state<String>());
 
     final paragraph = builder.build();
 

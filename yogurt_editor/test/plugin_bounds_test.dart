@@ -16,7 +16,7 @@ void main() {
       final cell = editor.createTest(
         plugins: const [BoundsPlugin()],
       );
-      expect(cell.state.plugin<Bounds>(), isNotNull);
+      expect(cell.state<Bounds>(), isNotNull);
     });
 
     test('hit test', () async {
@@ -79,7 +79,7 @@ void main() {
         ),
       );
       expect(result, isA<InvokeDone>());
-      expect(cell.state.plugin<Bounds>().position, const Offset(150, 150));
+      expect(cell.state<Bounds>().position, const Offset(150, 150));
     });
 
     test('move', () async {
@@ -101,7 +101,7 @@ void main() {
         ),
       );
       expect(result, isA<InvokeDone>());
-      expect(cell.state.plugin<Bounds>().position, const Offset(50, 50));
+      expect(cell.state<Bounds>().position, const Offset(50, 50));
     });
 
     test('resize relatively', () async {
@@ -123,7 +123,7 @@ void main() {
         ),
       );
       expect(result, isA<InvokeDone>());
-      expect(cell.state.plugin<Bounds>().size, const Size(150, 150));
+      expect(cell.state<Bounds>().size, const Size(150, 150));
     });
   });
 }

@@ -113,7 +113,7 @@ class IntrinsicBoundsPlugin extends CellPluginBase {
     );
 
     controller.on<MoveEvent>((event, update) {
-      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+      update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           left: event.position.dx,
           top: event.position.dy,
@@ -122,7 +122,7 @@ class IntrinsicBoundsPlugin extends CellPluginBase {
     });
 
     controller.on<MoveRelativeEvent>((event, update) {
-      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+      update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           left: bounds.left + event.delta.dx,
           top: bounds.top + event.delta.dy,
@@ -131,7 +131,7 @@ class IntrinsicBoundsPlugin extends CellPluginBase {
     });
 
     controller.on<LayoutEvent>((event, update) {
-      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+      update(controller.state.rebuild((Bounds bounds) {
         final size = bounds.maybeMap(
           orElse: () => null,
           intrinsic: (value) {
@@ -164,7 +164,7 @@ class BoundsPlugin extends CellPluginBase {
     );
 
     controller.on<MoveEvent>((event, update) {
-      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+      update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           left: event.position.dx,
           top: event.position.dy,
@@ -173,7 +173,7 @@ class BoundsPlugin extends CellPluginBase {
     });
 
     controller.on<MoveRelativeEvent>((event, update) {
-      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+      update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           left: bounds.left + event.delta.dx,
           top: bounds.top + event.delta.dy,
@@ -182,7 +182,7 @@ class BoundsPlugin extends CellPluginBase {
     });
 
     controller.on<ResizeEvent>((event, update) {
-      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+      update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           width: event.size.width,
           height: event.size.height,
@@ -191,7 +191,7 @@ class BoundsPlugin extends CellPluginBase {
     });
 
     controller.on<ResizeRelativeEvent>((event, update) {
-      update(controller.state.rebuildWithPlugin((Bounds bounds) {
+      update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           width: bounds.width + event.delta.dx,
           height: bounds.height + event.delta.dy,
@@ -234,13 +234,13 @@ extension CellMaybeBounds on CellController {
       return null;
     }
 
-    var bounds = state.plugin<Bounds>();
+    var bounds = state<Bounds>();
     visitAncestors((cell) {
       if (!cell.state.has<Bounds>()) {
         return true;
       }
 
-      final cellBounds = cell.state.plugin<Bounds>();
+      final cellBounds = cell.state<Bounds>();
 
       bounds = bounds.copyWith(
         top: bounds.top + cellBounds.top,
@@ -258,7 +258,7 @@ extension CellMaybeBounds on CellController {
       return null;
     }
 
-    return state.plugin<Bounds>();
+    return state<Bounds>();
   }
 
   Offset? get maybeCenter => _maybeBounds?.center;

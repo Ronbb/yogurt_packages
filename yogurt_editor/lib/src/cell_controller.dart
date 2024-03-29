@@ -131,7 +131,7 @@ class CellController extends EventBus<CellState> {
   }
 
   void initializePluginState<T>(T Function(T?) creator) {
-    update(state.copyWithPlugin(creator(state.plugins[T])));
+    update(state.update(creator(state.maybe<T>())));
   }
 
   void depend<Event extends EventBase>(

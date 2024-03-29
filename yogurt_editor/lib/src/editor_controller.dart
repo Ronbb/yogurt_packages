@@ -107,40 +107,45 @@ abstract class EditorPluginBase extends PluginBase<EditorController> {
 }
 
 @freezed
-class StateWithPlugins extends StateBase with _$StateWithPlugins {
-  const StateWithPlugins._();
+class StateWithData extends StateBase with _$StateWithData {
+  const StateWithData._();
 
-  const factory StateWithPlugins.editor({
-    @Default({}) Map<Type, dynamic> plugins,
+  const factory StateWithData.editor({
+    @Default({}) Map<Type, dynamic> all,
   }) = EditorState;
-  const factory StateWithPlugins.cell({
+  const factory StateWithData.cell({
     required dynamic id,
     required CellModelBase model,
-    @Default({}) Map<Type, dynamic> plugins,
+    @Default({}) Map<Type, dynamic> all,
   }) = CellState;
 
   @useResult
-  T plugin<T>() {
-    return plugins[T]!;
+  T get<T>() {
+    return all[T] as T;
   }
 
   @useResult
-  T? maybePlugin<T>() {
-    return plugins[T];
+  T? maybe<T>() {
+    return all[T] as T?;
+  }
+
+  @useResult
+  T call<T>() {
+    return all[T] as T;
   }
 
   @useResult
   bool has<T>() {
-    return plugins.containsKey(T);
+    return all.containsKey(T);
   }
 
   @useResult
-  R rebuildWithPlugin<T, R>(T Function(T plugin) rebuilder) {
-    return copyWithPlugin(rebuilder(plugin()));
+  R rebuild<T, R>(T Function(T data) rebuilder) {
+    return update(rebuilder(get()));
   }
 
   @useResult
-  R copyWithPlugin<T, R>(T plugin) {
-    return copyWith(plugins: Map.of(plugins)..[T] = plugin) as R;
+  R update<T, R>(T data) {
+    return copyWith(all: Map.of(all)..[T] = data) as R;
   }
 }

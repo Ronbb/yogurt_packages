@@ -14,7 +14,7 @@ void main() {
       final cell = editor.createTest(
         plugins: const [DragPlugin()],
       );
-      expect(cell.state.plugin<Drag>(), isNotNull);
+      expect(cell.state<Drag>(), isNotNull);
     });
 
     test('drag start', () async {
@@ -28,9 +28,9 @@ void main() {
       final result = await cell.invoke(const DragStartEvent());
 
       expect(result, isA<InvokeDone>());
-      expect(cell.state.plugin<Drag>(), isA<Dragging>());
+      expect(cell.state<Drag>(), isA<Dragging>());
       expect(
-        cell.state.plugin<Drag>(),
+        cell.state<Drag>(),
         Dragging(
           initialPosition: Offset.zero,
           initialParentId: cell.parent?.state.id,
@@ -51,12 +51,12 @@ void main() {
         delta: Offset(100, 100),
       ));
       expect(result, isA<InvokeDone>());
-      expect(cell.state.plugin<Drag>(), isA<Dragging>());
-      expect(cell.state.plugin<Bounds>().position, const Offset(100, 100));
+      expect(cell.state<Drag>(), isA<Dragging>());
+      expect(cell.state<Bounds>().position, const Offset(100, 100));
       await cell.invoke(const DragUpdateEvent(
         delta: Offset(100, 100),
       ));
-      expect(cell.state.plugin<Bounds>().position, const Offset(200, 200));
+      expect(cell.state<Bounds>().position, const Offset(200, 200));
     });
 
     test('drag complete', () async {
@@ -73,13 +73,13 @@ void main() {
       ));
       final result = await cell.invoke(const DragCompleteEvent());
       expect(result, isA<InvokeDone>());
-      expect(cell.state.plugin<Drag>(), isA<DragReady>());
-      expect(cell.state.plugin<Bounds>().position, const Offset(100, 100));
+      expect(cell.state<Drag>(), isA<DragReady>());
+      expect(cell.state<Bounds>().position, const Offset(100, 100));
       // not working
       await cell.invoke(const DragUpdateEvent(
         delta: Offset(100, 100),
       ));
-      expect(cell.state.plugin<Bounds>().position, const Offset(100, 100));
+      expect(cell.state<Bounds>().position, const Offset(100, 100));
     });
 
     test('drag cancel', () async {
@@ -96,13 +96,13 @@ void main() {
       ));
       final result = await cell.invoke(const DragCancelEvent());
       expect(result, isA<InvokeDone>());
-      expect(cell.state.plugin<Drag>(), isA<DragReady>());
-      expect(cell.state.plugin<Bounds>().position, Offset.zero);
+      expect(cell.state<Drag>(), isA<DragReady>());
+      expect(cell.state<Bounds>().position, Offset.zero);
       // not working
       await cell.invoke(const DragUpdateEvent(
         delta: Offset(100, 100),
       ));
-      expect(cell.state.plugin<Bounds>().position, Offset.zero);
+      expect(cell.state<Bounds>().position, Offset.zero);
     });
 
     test('drop', () async {
