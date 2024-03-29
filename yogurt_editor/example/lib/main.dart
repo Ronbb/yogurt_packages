@@ -113,6 +113,13 @@ class NodeModel extends CellModelBase {
   const NodeModel();
 
   @override
+  List<CellPluginBase> get plugins => const [
+        BoundsPlugin(),
+        DragPlugin(),
+        DropPlugin(),
+      ];
+
+  @override
   Widget build(BuildContext context, CellState state) {
     return ColoredBox(
       color: Colors.blue,
