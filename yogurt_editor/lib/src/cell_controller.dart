@@ -18,7 +18,7 @@ class DependencyEvent<Event extends EventBase, State extends StateBase>
   }) = _DependencyEvent<Event, State>;
 }
 
-class CellController extends EventBus<CellState> {
+class CellController extends AsyncEventBus<CellState> {
   CellController._({
     required super.state,
     super.plugins,
@@ -142,7 +142,7 @@ class CellController extends EventBus<CellState> {
   }
 
   @override
-  FutureOr<void> onAfterInvoke<Event extends EventBase>(
+  Future<void> onAfterInvoke<Event extends EventBase>(
       Event event, CellState previous) async {
     if (event is DependencyEvent) {
       return;

@@ -1,8 +1,6 @@
 part of 'event_bus.dart';
 
-abstract class StateBase {
-  const StateBase();
-}
+typedef StateBase = Object;
 
 @freezed
 class InvokeResult<State extends StateBase> with _$InvokeResult<State> {

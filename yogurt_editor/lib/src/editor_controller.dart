@@ -10,7 +10,7 @@ import 'notifier.dart';
 part 'cell_controller.dart';
 part 'editor_controller.freezed.dart';
 
-class EditorController extends EventBus<EditorState> {
+class EditorController extends AsyncEventBus<EditorState> {
   EditorController({
     required CellState root,
     super.state = const EditorState(),

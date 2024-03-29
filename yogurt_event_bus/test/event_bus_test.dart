@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 
 import 'package:yogurt_event_bus/yogurt_event_bus.dart';
 
@@ -28,11 +28,11 @@ class _TestEvent extends EventBase with _TestValue {
   final Object? value;
 }
 
-class _TestPlugin extends PluginBase {
+class _TestPlugin extends PluginBase<AsyncEventBus> {
   _TestPlugin();
 
   @override
-  void onCreate(EventBus controller) {
+  void onCreate(AsyncEventBus controller) {
     controller.on<_TestEvent>((event, update) {
       update(_TestState(event.value));
     });
@@ -41,7 +41,7 @@ class _TestPlugin extends PluginBase {
 
 void main() {
   test('event bus', () async {
-    final bus = EventBus(
+    final bus = AsyncEventBus(
       state: const _TestState(null),
       plugins: [_TestPlugin()],
     );

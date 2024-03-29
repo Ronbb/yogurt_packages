@@ -1,8 +1,6 @@
 part of 'event_bus.dart';
 
-abstract class EventBase {
-  const EventBase();
-}
+typedef EventBase = Object;
 
 @freezed
 class AfterEvent<Event extends EventBase, State extends StateBase>
