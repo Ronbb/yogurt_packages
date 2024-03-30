@@ -1,5 +1,5 @@
 name: yogurt_editor
-description: "A new Flutter package project."
+description: "A flexible editor create and manipulate diagrams programmatically. Easily generate, customize, and visualize diagrams within your applications."
 version: 0.0.1
 homepage: "https://github.com/Ronbb/yogurt_packages"
 
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  yogurt_event_bus: any
+  yogurt_event_bus: ^0.0.1
   freezed_annotation: ^2.4.1
 
 dev_dependencies:

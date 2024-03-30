@@ -1,5 +1,5 @@
 name: yogurt_event_bus
-description: "A new Flutter package project."
+description: "Provide async or sync event bus for building complex logic."
 version: 0.0.1
 homepage: "https://github.com/Ronbb/yogurt_packages"
 
