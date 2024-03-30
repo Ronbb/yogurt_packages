@@ -222,14 +222,14 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.2"
   yogurt_event_bus:
     dependency: "direct overridden"
     description:
       path: "../../yogurt_event_bus"
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.2"
 sdks:
   dart: ">=3.3.0 <4.0.0"
   flutter: ">=3.19.0"

@@ -70,7 +70,7 @@ void main() {
       );
 
       {
-        final result = await edge.invoke(const PathRebuildEvent());
+        final result = edge.invoke(const PathRebuildEvent());
         expect(result, isA<InvokeDone>());
 
         final path = result.state<EdgePath>().path;
@@ -148,7 +148,7 @@ void main() {
       );
 
       {
-        final result = await edge.invoke(const PathRebuildEvent());
+        final result = edge.invoke(const PathRebuildEvent());
         expect(result, isA<InvokeDone>());
 
         final path = edge.state<EdgePath>().path;
@@ -166,7 +166,7 @@ void main() {
       }
 
       {
-        await cell1.invoke(const MoveRelativeEvent(
+        cell1.invoke(const MoveRelativeEvent(
           delta: Offset(320, 480),
         ));
 

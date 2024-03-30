@@ -62,6 +62,11 @@ class DropPlugin extends CellPluginBase {
       (drop) => drop ?? const Drop.ready(),
     );
   }
+
+  @override
+  Widget build(BuildContext context, CellController controller, Widget child) {
+    return child;
+  }
 }
 
 class DragPlugin extends CellPluginBase {
@@ -88,7 +93,7 @@ class DragPlugin extends CellPluginBase {
     controller.on<DragUpdateEvent>((event, update) async {
       final drag = controller.state<Drag>();
       if (drag is Dragging) {
-        final result = await controller.invoke(MoveRelativeEvent(
+        final result = controller.invoke(MoveRelativeEvent(
           delta: event.delta,
         ));
 
@@ -134,7 +139,7 @@ class DragPlugin extends CellPluginBase {
     controller.on<DragCancelEvent>((event, update) async {
       final drag = controller.state<Drag>();
       if (drag is Dragging) {
-        await controller.invoke(MoveEvent(
+        controller.invoke(MoveEvent(
           position: drag.initialPosition,
         ));
         update(controller.state.update(const Drag.ready()));
@@ -144,5 +149,22 @@ class DragPlugin extends CellPluginBase {
         );
       }
     });
+  }
+
+  @override
+  Widget build(BuildContext context, CellController controller, Widget child) {
+    return GestureDetector(
+      onPanStart: (details) {
+        controller.invoke(const DragStartEvent());
+      },
+      onPanUpdate: (details) {
+        controller.invoke(DragUpdateEvent(delta: details.delta));
+      },
+      onPanEnd: (details) {
+        // check drop result and invoke canceled event.
+        controller.invoke(const DragCompleteEvent());
+      },
+      child: child,
+    );
   }
 }

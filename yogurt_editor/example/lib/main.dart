@@ -77,7 +77,7 @@ class _ExampleState extends State<Example> {
     controller.create(
       CellState(
         id: _id(),
-        model: const NodeModel(),
+        model: const IntrinsicNodeModel(),
         all: const {
           String: 'inner text',
           Bounds: Bounds.intrinsic(
@@ -87,11 +87,6 @@ class _ExampleState extends State<Example> {
           ),
         },
       ),
-      extraPlugins: [
-        const IntrinsicBoundsPlugin(
-          delegate: IntrinsicBounds(),
-        )
-      ],
     );
   }
 
@@ -115,6 +110,27 @@ class NodeModel extends CellModelBase {
   @override
   List<CellPluginBase> get plugins => const [
         BoundsPlugin(),
+        DragPlugin(),
+        DropPlugin(),
+      ];
+
+  @override
+  Widget build(BuildContext context, CellState state) {
+    return ColoredBox(
+      color: Colors.blue,
+      child: state.has<String>() ? Text(state()) : null,
+    );
+  }
+}
+
+class IntrinsicNodeModel extends CellModelBase {
+  const IntrinsicNodeModel();
+
+  @override
+  List<CellPluginBase> get plugins => const [
+        IntrinsicBoundsPlugin(
+          delegate: IntrinsicBounds(),
+        ),
         DragPlugin(),
         DropPlugin(),
       ];

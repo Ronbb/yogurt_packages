@@ -73,7 +73,7 @@ void main() {
         plugins: const [BoundsPlugin()],
       );
 
-      final result = await cell.invoke(
+      final result = cell.invoke(
         const MoveRelativeEvent(
           delta: Offset(50, 50),
         ),
@@ -95,7 +95,7 @@ void main() {
         plugins: const [BoundsPlugin()],
       );
 
-      final result = await cell.invoke(
+      final result = cell.invoke(
         const MoveEvent(
           position: Offset(50, 50),
         ),
@@ -117,7 +117,7 @@ void main() {
         plugins: const [BoundsPlugin()],
       );
 
-      final result = await cell.invoke(
+      final result = cell.invoke(
         const ResizeRelativeEvent(
           delta: Offset(50, 50),
         ),

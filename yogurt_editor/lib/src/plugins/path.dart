@@ -42,7 +42,7 @@ class PathPlugin extends CellPluginBase {
     });
   }
 
-  Future<CellState> _rebuild(CellController controller) async {
+  CellState _rebuild(CellController controller) {
     final edgePath = controller.state<EdgePath>();
 
     final path = Path();
@@ -90,10 +90,10 @@ class PathPlugin extends CellPluginBase {
     }
 
     final bounds = path.getBounds();
-    await controller.invoke(MoveEvent(
+    controller.invoke(MoveEvent(
       position: bounds.topLeft,
     ));
-    await controller.invoke(ResizeEvent(
+    controller.invoke(ResizeEvent(
       size: bounds.size,
     ));
 
@@ -120,24 +120,24 @@ class PathPlugin extends CellPluginBase {
     _createDependency(controller, initialEdgePath.sourceId);
     _createDependency(controller, initialEdgePath.targetId);
 
-    controller.on<PathRebuildEvent>((event, update) async {
-      update(await _rebuild(controller));
+    controller.on<PathRebuildEvent>((event, update) {
+      update(_rebuild(controller));
     });
 
-    controller.depend<MoveEvent>((event, update) async {
-      update(await _rebuild(controller));
+    controller.depend<MoveEvent>((event, update) {
+      update(_rebuild(controller));
     });
 
-    controller.depend<ResizeEvent>((event, update) async {
-      update(await _rebuild(controller));
+    controller.depend<ResizeEvent>((event, update) {
+      update(_rebuild(controller));
     });
 
-    controller.depend<MoveRelativeEvent>((event, update) async {
-      update(await _rebuild(controller));
+    controller.depend<MoveRelativeEvent>((event, update) {
+      update(_rebuild(controller));
     });
 
     controller.depend<ResizeRelativeEvent>((event, update) async {
-      update(await _rebuild(controller));
+      update(_rebuild(controller));
     });
   }
 }

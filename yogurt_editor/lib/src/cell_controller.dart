@@ -18,10 +18,10 @@ class DependencyEvent<Event extends EventBase, State extends StateBase>
   }) = _DependencyEvent<Event, State>;
 }
 
-class CellController extends AsyncEventBus<CellState> {
+class CellController extends SyncEventBus<CellState> {
   CellController._({
     required super.state,
-    super.plugins,
+    List<CellPluginBase> super.plugins = const [],
     CellController? parent,
     required this.editor,
   }) : _parent = parent;
@@ -29,6 +29,9 @@ class CellController extends AsyncEventBus<CellState> {
   CellController? _parent;
 
   CellController? get parent => _parent;
+
+  @override
+  List<CellPluginBase> get plugins => super.plugins.cast();
 
   final EditorController editor;
 
@@ -38,20 +41,18 @@ class CellController extends AsyncEventBus<CellState> {
 
   final Map<dynamic, CellController> _dependedCells = {};
 
-  late final children = UnmodifiedValueNotifier(UnmodifiableMapView(_children));
+  Map<dynamic, CellController> get children => UnmodifiableMapView(_children);
 
   CellController? child(dynamic id) => _children[id];
 
   void _add(CellController cell) {
     _children[cell.state.id] = cell;
     cell._parent = this;
-    children.notify();
   }
 
   CellController? _remove(dynamic id) {
     final cell = _children.remove(id);
     cell?._parent = null;
-    children.notify();
     return cell;
   }
 
@@ -81,7 +82,7 @@ class CellController extends AsyncEventBus<CellState> {
   }
 
   void visitDescendants(bool Function(CellController) vistor) {
-    var children = this.children.value.values;
+    var children = this.children.values;
     while (children.isNotEmpty) {
       for (var child in children) {
         if (!vistor(child)) {
@@ -91,7 +92,7 @@ class CellController extends AsyncEventBus<CellState> {
 
       final newChildren = <CellController>[];
       for (var child in children) {
-        newChildren.addAll(child.children.value.values);
+        newChildren.addAll(child.children.values);
       }
     }
   }
@@ -142,16 +143,15 @@ class CellController extends AsyncEventBus<CellState> {
   }
 
   @override
-  Future<void> onAfterInvoke<Event extends EventBase>(
-      Event event, CellState previous) async {
+  void onAfterInvoke<Event extends EventBase>(Event event, CellState previous) {
     if (event is DependencyEvent) {
       return;
     }
 
-    await super.onAfterInvoke(event, previous);
+    super.onAfterInvoke(event, previous);
 
     for (var dependedCell in _dependedCells.values) {
-      await dependedCell.invoke(
+      dependedCell.invoke(
         DependencyEvent(
           previous: previous,
           current: state,
@@ -162,15 +162,20 @@ class CellController extends AsyncEventBus<CellState> {
   }
 
   @override
-  Future<void> close() {
-    children.dispose();
-    return super.close();
-  }
-
-  @override
   String toString() {
     return '<Cell ${state.id}>';
   }
 }
 
-typedef CellPluginBase = PluginBase<CellController>;
+abstract class CellPluginBase extends PluginBase<CellController> {
+  const CellPluginBase();
+
+  Object? get id => null;
+
+  Widget build(
+    BuildContext context,
+    CellController controller,
+    Widget child,
+  ) =>
+      child;
+}

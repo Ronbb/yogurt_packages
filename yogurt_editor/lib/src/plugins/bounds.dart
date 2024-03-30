@@ -54,6 +54,20 @@ abstract class IntrinsicBoundsDelegate {
   Size computeDryLayout(CellController controller);
 }
 
+mixin BoundsBuilder on CellPluginBase {
+  @override
+  Widget build(BuildContext context, CellController controller, Widget child) {
+    final bounds = controller.state<Bounds>();
+    return Positioned(
+      left: bounds.left,
+      top: bounds.top,
+      width: bounds.width,
+      height: bounds.height,
+      child: child,
+    );
+  }
+}
+
 @freezed
 class BoundsEvent extends EventBase with _$BoundsEvent {
   const BoundsEvent._();
@@ -77,7 +91,7 @@ class BoundsEvent extends EventBase with _$BoundsEvent {
   const factory BoundsEvent.layout() = LayoutEvent;
 }
 
-class IntrinsicBoundsPlugin extends CellPluginBase {
+class IntrinsicBoundsPlugin extends CellPluginBase with BoundsBuilder {
   const IntrinsicBoundsPlugin({
     required this.delegate,
   });
@@ -154,7 +168,7 @@ class IntrinsicBoundsPlugin extends CellPluginBase {
   }
 }
 
-class BoundsPlugin extends CellPluginBase {
+class BoundsPlugin extends CellPluginBase with BoundsBuilder {
   const BoundsPlugin();
 
   @override
@@ -212,7 +226,7 @@ extension CellHitTest on CellController {
   @useResult
   CellController? hitTest(Offset position) {
     if (_maybeBounds?.contains(position) ?? true) {
-      for (var child in children.value.values) {
+      for (var child in children.values) {
         final result = child.hitTest(position - (maybePosition ?? Offset.zero));
         if (result != null) {
           return result;

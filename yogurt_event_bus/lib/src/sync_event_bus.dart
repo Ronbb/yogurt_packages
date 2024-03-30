@@ -12,7 +12,7 @@ class SyncEventBus<State extends StateBase> extends EventBusBase<State> {
     }
   }
 
-  final _stateController = StreamController<State>.broadcast();
+  final _stateController = StreamController<State>.broadcast(sync: true);
 
   final _eventHandlers = <Type, List<_EventHandler>>{};
 
@@ -51,7 +51,7 @@ class SyncEventBus<State extends StateBase> extends EventBusBase<State> {
 
     final handlers = _eventHandlers[Event];
 
-    if (handlers == null || handlers.isNotEmpty) {
+    if (handlers == null || handlers.isEmpty) {
       return InvokeResult.unhandled(
         state: state,
       );

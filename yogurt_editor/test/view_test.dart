@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_utils.dart';
@@ -28,9 +28,13 @@ void main() {
         },
       );
 
-      await tester.pumpWidget(EditorView(
-        controller: editor,
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: EditorView(
+            controller: editor,
+          ),
+        ),
+      );
 
       final widget = find.bySubtype<Container>();
       expect(widget, findsOne);

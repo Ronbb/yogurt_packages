@@ -1,11 +1,10 @@
-import 'dart:async';
 import 'dart:collection';
 
+import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:yogurt_event_bus/yogurt_event_bus.dart';
 
 import 'cell_model.dart';
-import 'notifier.dart';
 
 part 'cell_controller.dart';
 part 'editor_controller.freezed.dart';
@@ -31,17 +30,17 @@ class EditorController extends AsyncEventBus<EditorState> {
 
   CellController _create(
     CellState state, {
-    List<CellPluginBase> extraCellPlugins = const [],
+    List<CellPluginBase> extraPlugins = const [],
   }) {
-    final pluginTypes = <Type>{};
+    final pluginIds = <Object?>{};
     final plugins = <CellPluginBase>[];
 
-    for (var plugin in [...state.model.plugins, ...extraCellPlugins].reversed) {
-      if (pluginTypes.contains(plugin.runtimeType)) {
+    for (var plugin in [...state.model.plugins, ...extraPlugins].reversed) {
+      if (plugin.id != null && pluginIds.contains(plugin.id)) {
         continue;
       }
 
-      pluginTypes.add(plugin.runtimeType);
+      pluginIds.add(plugin.id);
       plugins.add(plugin);
     }
 
@@ -63,7 +62,7 @@ class EditorController extends AsyncEventBus<EditorState> {
 
     final cell = _create(
       state,
-      extraCellPlugins: extraPlugins,
+      extraPlugins: extraPlugins,
     );
 
     _cells[state.id] = cell;

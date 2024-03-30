@@ -25,7 +25,7 @@ void main() {
         ],
       );
 
-      final result = await cell.invoke(const DragStartEvent());
+      final result = cell.invoke(const DragStartEvent());
 
       expect(result, isA<InvokeDone>());
       expect(cell.state<Drag>(), isA<Dragging>());
@@ -46,14 +46,14 @@ void main() {
         ],
       );
 
-      await cell.invoke(const DragStartEvent());
-      final result = await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      final result = cell.invoke(const DragUpdateEvent(
         delta: Offset(100, 100),
       ));
       expect(result, isA<InvokeDone>());
       expect(cell.state<Drag>(), isA<Dragging>());
       expect(cell.state<Bounds>().position, const Offset(100, 100));
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(100, 100),
       ));
       expect(cell.state<Bounds>().position, const Offset(200, 200));
@@ -67,16 +67,16 @@ void main() {
         ],
       );
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(100, 100),
       ));
-      final result = await cell.invoke(const DragCompleteEvent());
+      final result = cell.invoke(const DragCompleteEvent());
       expect(result, isA<InvokeDone>());
       expect(cell.state<Drag>(), isA<DragReady>());
       expect(cell.state<Bounds>().position, const Offset(100, 100));
       // not working
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(100, 100),
       ));
       expect(cell.state<Bounds>().position, const Offset(100, 100));
@@ -90,16 +90,16 @@ void main() {
         ],
       );
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(100, 100),
       ));
-      final result = await cell.invoke(const DragCancelEvent());
+      final result = cell.invoke(const DragCancelEvent());
       expect(result, isA<InvokeDone>());
       expect(cell.state<Drag>(), isA<DragReady>());
       expect(cell.state<Bounds>().position, Offset.zero);
       // not working
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(100, 100),
       ));
       expect(cell.state<Bounds>().position, Offset.zero);
@@ -147,19 +147,19 @@ void main() {
         parent: container,
       );
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(500, 500),
       ));
-      await cell.invoke(const DragCompleteEvent());
+      cell.invoke(const DragCompleteEvent());
 
       expect(cell.parent, editor.root);
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(-500, -500),
       ));
-      await cell.invoke(const DragCompleteEvent());
+      cell.invoke(const DragCompleteEvent());
 
       expect(cell.parent, container);
     });
@@ -206,27 +206,27 @@ void main() {
         parent: container,
       );
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(50, 50),
       ));
-      await cell.invoke(const DragCompleteEvent());
+      cell.invoke(const DragCompleteEvent());
 
       expect(cell.parent, container);
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(500, 500),
       ));
-      await cell.invoke(const DragCompleteEvent());
+      cell.invoke(const DragCompleteEvent());
 
       expect(cell.parent, editor.root);
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(-500, -500),
       ));
-      await cell.invoke(const DragCompleteEvent());
+      cell.invoke(const DragCompleteEvent());
 
       expect(cell.parent, editor.root);
     });
@@ -273,27 +273,27 @@ void main() {
         parent: container,
       );
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(50, 50),
       ));
-      await cell.invoke(const DragCompleteEvent());
+      cell.invoke(const DragCompleteEvent());
 
       expect(cell.parent, container);
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(500, 500),
       ));
-      await cell.invoke(const DragCompleteEvent());
+      cell.invoke(const DragCompleteEvent());
 
       expect(cell.parent, editor.root);
 
-      await cell.invoke(const DragStartEvent());
-      await cell.invoke(const DragUpdateEvent(
+      cell.invoke(const DragStartEvent());
+      cell.invoke(const DragUpdateEvent(
         delta: Offset(-500, -500),
       ));
-      await cell.invoke(const DragCompleteEvent());
+      cell.invoke(const DragCompleteEvent());
 
       expect(cell.parent, editor.root);
     });
