@@ -48,7 +48,7 @@ class _ExampleState extends State<Example> {
       ),
     );
 
-    controller.create(CellState(
+    final n1 = controller.create(CellState(
       id: _id(),
       model: const NodeModel(),
       all: const {
@@ -60,6 +60,22 @@ class _ExampleState extends State<Example> {
         ),
       },
     ));
+
+    controller.create(
+      CellState(
+        id: _id(),
+        model: const NodeModel(),
+        all: const {
+          Bounds: Bounds.fixed(
+            left: 20,
+            top: 20,
+            width: 20,
+            height: 20,
+          ),
+        },
+      ),
+      parent: n1,
+    );
 
     controller.create(CellState(
       id: _id(),
@@ -117,7 +133,7 @@ class NodeModel extends CellModelBase {
   @override
   Widget build(BuildContext context, CellState state) {
     return ColoredBox(
-      color: Colors.blue,
+      color: Colors.blue.withOpacity(0.3),
       child: state.has<String>() ? Text(state()) : null,
     );
   }
