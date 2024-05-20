@@ -1,3 +1,8 @@
+## 0.0.5
+
+- Upgrade deps.
+- Plugin handler of child add/remove.
+
 ## 0.0.4
 
 - fix: child cell should be effected by parent cell plugin

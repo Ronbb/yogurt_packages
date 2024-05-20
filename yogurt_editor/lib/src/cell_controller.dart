@@ -45,14 +45,23 @@ class CellController extends SyncEventBus<CellState> {
 
   CellController? child(dynamic id) => _children[id];
 
-  void _add(CellController cell) {
+  void add(CellController cell) {
     _children[cell.state.id] = cell;
     cell._parent = this;
+    for (var plugin in plugins) {
+      plugin.onChildAdded(this, cell);
+    }
   }
 
-  CellController? _remove(dynamic id) {
+  CellController? remove(dynamic id) {
     final cell = _children.remove(id);
-    cell?._parent = null;
+    if (cell != null) {
+      cell._parent = null;
+      for (var plugin in plugins) {
+        plugin.onChildRemoved(this, cell);
+      }
+    }
+
     return cell;
   }
 
@@ -178,4 +187,8 @@ abstract class CellPluginBase extends PluginBase<CellController> {
     Widget child,
   ) =>
       child;
+
+  void onChildAdded(CellController controller, CellController child) {}
+
+  void onChildRemoved(CellController controller, CellController child) {}
 }

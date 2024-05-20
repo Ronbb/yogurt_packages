@@ -67,7 +67,7 @@ class EditorController extends AsyncEventBus<EditorState> {
 
     _cells[state.id] = cell;
 
-    (parent ?? root)._add(cell);
+    (parent ?? root).add(cell);
 
     return cell;
   }
@@ -75,7 +75,7 @@ class EditorController extends AsyncEventBus<EditorState> {
   CellController? remove(dynamic id) {
     final cell = _cells.remove(id);
 
-    cell?.parent?._remove(id);
+    cell?.parent?.remove(id);
 
     return cell;
   }
@@ -84,8 +84,8 @@ class EditorController extends AsyncEventBus<EditorState> {
     if (child.parent == parent) {
       return;
     }
-    child.parent?._remove(child.state.id);
-    parent._add(child);
+    child.parent?.remove(child.state.id);
+    parent.add(child);
   }
 
   void createDependency(CellController depended, CellController depending) {

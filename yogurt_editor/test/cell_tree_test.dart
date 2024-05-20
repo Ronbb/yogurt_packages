@@ -7,14 +7,20 @@ void main() {
     test('add and remove', () async {
       final editor = EditorController(
         state: const EditorState(),
-        root: TestCellModel.create(),
+        root: TestCellModel.create(
+          plugins: [
+            const CellTreePlugin(),
+          ],
+        ),
       );
 
       expect(editor.root.children, isEmpty);
+      expect(editor.root.state<CellTreeState>().children, isEmpty);
       expect(editor.cells, hasLength(1));
 
       final cell = editor.create(TestCellModel.create());
       expect(editor.root.children, hasLength(1));
+      expect(editor.root.state<CellTreeState>().children, hasLength(1));
       expect(editor.cells, hasLength(2));
       expect(cell.parent, isNotNull);
 
