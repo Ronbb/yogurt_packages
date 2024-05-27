@@ -1,3 +1,7 @@
+## 0.0.6
+
+- Fix setState after dispose.
+
 ## 0.0.5
 
 - Upgrade deps.

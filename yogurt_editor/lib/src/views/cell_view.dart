@@ -35,14 +35,22 @@ class _CellViewState extends State<CellView> {
     super.didUpdateWidget(oldWidget);
   }
 
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
   void _attach() {
     _detach();
     _controller = widget.controller;
     _state = _controller.state;
     _subscription = _controller.stream.listen((data) {
-      setState(() {
-        _state = _controller.state;
-      });
+      if (mounted) {
+        setState(() {
+          _state = _controller.state;
+        });
+      }
     });
   }
 
