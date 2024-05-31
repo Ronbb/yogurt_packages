@@ -54,7 +54,7 @@ abstract class IntrinsicBoundsDelegate {
   Size computeDryLayout(CellController controller);
 }
 
-mixin BoundsBuilder on CellPluginBase {
+mixin BoundsBuilder on CellPlugin {
   @override
   Widget build(BuildContext context, CellController controller, Widget child) {
     final bounds = controller.state<Bounds>();
@@ -91,7 +91,7 @@ class BoundsEvent extends EventBase with _$BoundsEvent {
   const factory BoundsEvent.layout() = LayoutEvent;
 }
 
-class IntrinsicBoundsPlugin extends CellPluginBase with BoundsBuilder {
+class IntrinsicBoundsPlugin extends CellPlugin with BoundsBuilder {
   const IntrinsicBoundsPlugin({
     required this.delegate,
   });
@@ -99,7 +99,7 @@ class IntrinsicBoundsPlugin extends CellPluginBase with BoundsBuilder {
   final IntrinsicBoundsDelegate delegate;
 
   @override
-  void onCreate(CellController controller) {
+  Iterable<Disposable> onCreate(CellController controller) sync* {
     controller.initializePluginState<Bounds>(
       (bounds) {
         bounds ??= IntrinsicBounds(delegate: delegate);
@@ -126,7 +126,7 @@ class IntrinsicBoundsPlugin extends CellPluginBase with BoundsBuilder {
       },
     );
 
-    controller.on<MoveEvent>((event, update) {
+    yield controller.on<MoveEvent>((event, update) {
       update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           left: event.position.dx,
@@ -135,7 +135,7 @@ class IntrinsicBoundsPlugin extends CellPluginBase with BoundsBuilder {
       }));
     });
 
-    controller.on<MoveRelativeEvent>((event, update) {
+    yield controller.on<MoveRelativeEvent>((event, update) {
       update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           left: bounds.left + event.delta.dx,
@@ -144,7 +144,7 @@ class IntrinsicBoundsPlugin extends CellPluginBase with BoundsBuilder {
       }));
     });
 
-    controller.on<LayoutEvent>((event, update) {
+    yield controller.on<LayoutEvent>((event, update) {
       update(controller.state.rebuild((Bounds bounds) {
         final size = bounds.maybeMap(
           orElse: () => null,
@@ -168,16 +168,16 @@ class IntrinsicBoundsPlugin extends CellPluginBase with BoundsBuilder {
   }
 }
 
-class BoundsPlugin extends CellPluginBase with BoundsBuilder {
+class BoundsPlugin extends CellPlugin with BoundsBuilder {
   const BoundsPlugin();
 
   @override
-  void onCreate(CellController controller) {
+  Iterable<Disposable> onCreate(CellController controller) sync* {
     controller.initializePluginState<Bounds>(
       (bounds) => bounds ?? const FixedBounds(),
     );
 
-    controller.on<MoveEvent>((event, update) {
+    yield controller.on<MoveEvent>((event, update) {
       update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           left: event.position.dx,
@@ -186,7 +186,7 @@ class BoundsPlugin extends CellPluginBase with BoundsBuilder {
       }));
     });
 
-    controller.on<MoveRelativeEvent>((event, update) {
+    yield controller.on<MoveRelativeEvent>((event, update) {
       update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           left: bounds.left + event.delta.dx,
@@ -195,7 +195,7 @@ class BoundsPlugin extends CellPluginBase with BoundsBuilder {
       }));
     });
 
-    controller.on<ResizeEvent>((event, update) {
+    yield controller.on<ResizeEvent>((event, update) {
       update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           width: event.size.width,
@@ -204,7 +204,7 @@ class BoundsPlugin extends CellPluginBase with BoundsBuilder {
       }));
     });
 
-    controller.on<ResizeRelativeEvent>((event, update) {
+    yield controller.on<ResizeRelativeEvent>((event, update) {
       update(controller.state.rebuild((Bounds bounds) {
         return bounds.copyWith(
           width: bounds.width + event.delta.dx,

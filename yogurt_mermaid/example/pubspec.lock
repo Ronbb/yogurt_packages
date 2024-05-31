@@ -230,14 +230,14 @@ packages:
       path: "../../yogurt_editor"
       relative: true
     source: path
-    version: "0.0.4"
+    version: "0.0.6"
   yogurt_event_bus:
     dependency: "direct overridden"
     description:
       path: "../../yogurt_event_bus"
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.4"
   yogurt_mermaid:
     dependency: "direct main"
     description:

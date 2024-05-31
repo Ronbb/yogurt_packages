@@ -21,7 +21,7 @@ class DependencyEvent<Event extends EventBase, State extends StateBase>
 class CellController extends SyncEventBus<CellState> {
   CellController._({
     required super.state,
-    List<CellPluginBase> super.plugins = const [],
+    List<CellPlugin> super.plugins = const [],
     CellController? parent,
     required this.editor,
   }) : _parent = parent;
@@ -31,7 +31,7 @@ class CellController extends SyncEventBus<CellState> {
   CellController? get parent => _parent;
 
   @override
-  List<CellPluginBase> get plugins => super.plugins.cast();
+  Iterable<CellPlugin> get plugins => super.plugins.cast();
 
   final EditorController editor;
 
@@ -144,11 +144,11 @@ class CellController extends SyncEventBus<CellState> {
     update(state.update(creator(state.maybe<T>())));
   }
 
-  void depend<Event extends EventBase>(
+  Disposable depend<Event extends EventBase>(
     EventHandler<DependencyEvent<Event, CellState>, CellState> handler, {
     HandlerPriority priority = HandlerPriority.medium,
   }) {
-    on<DependencyEvent<Event, CellState>>(handler);
+    return on<DependencyEvent<Event, CellState>>(handler);
   }
 
   @override
@@ -176,8 +176,9 @@ class CellController extends SyncEventBus<CellState> {
   }
 }
 
-abstract class CellPluginBase extends PluginBase<CellController> {
-  const CellPluginBase();
+abstract class CellPlugin
+    extends AutoDisposePluginBase<CellState, CellController> {
+  const CellPlugin();
 
   Object? get id => null;
 

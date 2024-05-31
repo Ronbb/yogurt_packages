@@ -1,3 +1,7 @@
+## 0.0.7
+
+- Disposable plugin.
+
 ## 0.0.6
 
 - Fix setState after dispose.

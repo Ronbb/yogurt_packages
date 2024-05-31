@@ -19,7 +19,7 @@ class EdgePath with _$EdgePath {
   }) = _EdgePath;
 }
 
-class PathPlugin extends CellPluginBase {
+class PathPlugin extends CellPlugin {
   const PathPlugin();
 
   // bool _isAvailableTerminal(CellController controller, dynamic id) {
@@ -105,7 +105,7 @@ class PathPlugin extends CellPluginBase {
   }
 
   @override
-  void onCreate(CellController controller) {
+  Iterable<Disposable> onCreate(CellController controller) sync* {
     controller.initializePluginState<EdgePath>(
       (edgePath) {
         if (edgePath == null) {
@@ -120,23 +120,23 @@ class PathPlugin extends CellPluginBase {
     _createDependency(controller, initialEdgePath.sourceId);
     _createDependency(controller, initialEdgePath.targetId);
 
-    controller.on<PathRebuildEvent>((event, update) {
+    yield controller.on<PathRebuildEvent>((event, update) {
       update(_rebuild(controller));
     });
 
-    controller.depend<MoveEvent>((event, update) {
+    yield controller.depend<MoveEvent>((event, update) {
       update(_rebuild(controller));
     });
 
-    controller.depend<ResizeEvent>((event, update) {
+    yield controller.depend<ResizeEvent>((event, update) {
       update(_rebuild(controller));
     });
 
-    controller.depend<MoveRelativeEvent>((event, update) {
+    yield controller.depend<MoveRelativeEvent>((event, update) {
       update(_rebuild(controller));
     });
 
-    controller.depend<ResizeRelativeEvent>((event, update) async {
+    yield controller.depend<ResizeRelativeEvent>((event, update) async {
       update(_rebuild(controller));
     });
   }

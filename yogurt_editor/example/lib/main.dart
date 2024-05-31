@@ -124,7 +124,7 @@ class NodeModel extends CellModelBase {
   const NodeModel();
 
   @override
-  List<CellPluginBase> get plugins => const [
+  List<CellPlugin> get plugins => const [
         BoundsPlugin(),
         DragPlugin(),
         DropPlugin(),
@@ -143,7 +143,7 @@ class IntrinsicNodeModel extends CellModelBase {
   const IntrinsicNodeModel();
 
   @override
-  List<CellPluginBase> get plugins => const [
+  List<CellPlugin> get plugins => const [
         IntrinsicBoundsPlugin(
           delegate: IntrinsicBounds(),
         ),

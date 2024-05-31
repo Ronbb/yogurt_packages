@@ -1,6 +1,6 @@
 name: yogurt_event_bus
 description: "Provide async or sync event bus for building complex logic. Support plugins and handler priorities"
-version: 0.0.4
+version: 0.0.5
 homepage: "https://github.com/Ronbb/yogurt_packages"
 
 environment:

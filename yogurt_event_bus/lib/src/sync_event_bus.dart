@@ -1,26 +1,18 @@
 part of 'event_bus.dart';
 
-class SyncEventBus<State extends StateBase> extends EventBusBase<State> {
+class SyncEventBus<State extends StateBase> extends EventBusBase<State>
+    with PluginManager<State> {
   SyncEventBus({
     required State state,
-    List<PluginBase<EventBusBase<State>>> plugins = const [],
-  })  : _state = state,
-        _plugins = plugins {
+    List<Plugin<State>> plugins = const [],
+  }) : _state = state {
     _stateController.add(state);
-    for (final plugin in _plugins) {
-      plugin.onCreate(this);
-    }
+    this.plugins = plugins;
   }
 
   final _stateController = StreamController<State>.broadcast(sync: true);
 
   final _eventHandlers = <Type, List<_EventHandler>>{};
-
-  final List<PluginBase<EventBusBase<State>>> _plugins;
-  List<PluginBase<EventBusBase<State>>> get plugins =>
-      _plugins is UnmodifiableListView
-          ? _plugins
-          : UnmodifiableListView(_plugins);
 
   State _state;
   @override
@@ -79,7 +71,7 @@ class SyncEventBus<State extends StateBase> extends EventBusBase<State> {
   }
 
   @override
-  void on<Event extends EventBase>(
+  Disposable on<Event extends EventBase>(
     EventHandler<Event, State> handler, {
     HandlerPriority priority = HandlerPriority.medium,
   }) {
@@ -94,6 +86,15 @@ class SyncEventBus<State extends StateBase> extends EventBusBase<State> {
     _eventHandlers[Event] = List.of(handlers)
       ..add(h)
       ..sort();
+
+    return () {
+      final handlers = _eventHandlers[Event];
+      if (handlers == null) {
+        return;
+      }
+
+      _eventHandlers[Event] = List.of(handlers)..remove(h);
+    };
   }
 
   @override
@@ -110,15 +111,16 @@ class SyncEventBus<State extends StateBase> extends EventBusBase<State> {
   }
 
   @override
-  void after<Event extends EventBase>(
+  Disposable after<Event extends EventBase>(
     EventHandler<AfterEvent<Event, State>, State> handler, {
     HandlerPriority priority = HandlerPriority.medium,
   }) {
-    on<AfterEvent<Event, State>>(handler);
+    return on<AfterEvent<Event, State>>(handler);
   }
 
   @override
   Future<void> close() async {
     await _stateController.close();
+    return super.close();
   }
 }

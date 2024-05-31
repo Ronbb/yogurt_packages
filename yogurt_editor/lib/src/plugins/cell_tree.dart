@@ -22,14 +22,14 @@ class CellTreeState with _$CellTreeState {
   }) = _CellTreeState;
 }
 
-class CellTreePlugin extends CellPluginBase {
+class CellTreePlugin extends CellPlugin {
   const CellTreePlugin();
 
   @override
-  void onCreate(CellController controller) {
+  Iterable<Disposable> onCreate(CellController controller) sync* {
     controller.initializePluginState((_) => const CellTreeState());
 
-    controller.on<AddCellEvent>((event, update) {
+    yield controller.on<AddCellEvent>((event, update) {
       update(controller.state.rebuild((CellTreeState state) {
         return state.copyWith(
           children: [...state.children, event.id],
@@ -37,7 +37,7 @@ class CellTreePlugin extends CellPluginBase {
       }));
     });
 
-    controller.on<RemoveCellEvent>((event, update) {
+    yield controller.on<RemoveCellEvent>((event, update) {
       update(controller.state.rebuild((CellTreeState state) {
         return state.copyWith(
           children: state.children.where((id) => id != event.id).toList(),

@@ -86,7 +86,7 @@ class TestCellModel extends CellModelBase {
 
   static CellState create({
     Map<Type, dynamic> state = const {},
-    List<CellPluginBase> plugins = const [],
+    List<CellPlugin> plugins = const [],
     Widget Function(BuildContext context, CellState state)? builder,
   }) {
     return CellState(
@@ -104,7 +104,7 @@ class TestCellModel extends CellModelBase {
   }
 
   @override
-  final List<CellPluginBase> plugins;
+  final List<CellPlugin> plugins;
 
   final Widget Function(BuildContext context, CellState state)? builder;
 
@@ -117,9 +117,9 @@ class TestCellModel extends CellModelBase {
 extension TestEditorController on EditorController {
   CellController createTest({
     Map<Type, dynamic> state = const {},
-    List<CellPluginBase> plugins = const [],
+    List<CellPlugin> plugins = const [],
     CellController? parent,
-    List<CellPluginBase> extraPlugins = const [],
+    List<CellPlugin> extraPlugins = const [],
     Widget Function(BuildContext context, CellState state)? builder,
   }) {
     return create(

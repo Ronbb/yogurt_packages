@@ -1,15 +1,13 @@
 part of 'event_bus.dart';
 
-class AsyncEventBus<State extends StateBase> extends EventBusBase<State> {
+class AsyncEventBus<State extends StateBase> extends EventBusBase<State>
+    with PluginManager<State> {
   AsyncEventBus({
     required State state,
-    List<PluginBase<EventBusBase<State>>> plugins = const [],
-  })  : _state = state,
-        _plugins = plugins {
+    List<Plugin<State>> plugins = const [],
+  }) : _state = state {
     _stateController.add(state);
-    for (final plugin in _plugins) {
-      plugin.onCreate(this);
-    }
+    this.plugins = plugins;
   }
 
   final _eventController = StreamController<EventBase>.broadcast();
@@ -19,12 +17,6 @@ class AsyncEventBus<State extends StateBase> extends EventBusBase<State> {
       LinkedHashMap<EventBase, Completer<InvokeResult<State>>>.identity();
   final _eventHandlers = <Type, List<_EventHandler>>{};
   final _eventSubscriptions = <Type, StreamSubscription>{};
-
-  final List<PluginBase<EventBusBase<State>>> _plugins;
-  List<PluginBase<EventBusBase<State>>> get plugins =>
-      _plugins is UnmodifiableListView
-          ? _plugins
-          : UnmodifiableListView(_plugins);
 
   State _state;
   @override
@@ -67,7 +59,7 @@ class AsyncEventBus<State extends StateBase> extends EventBusBase<State> {
   }
 
   @override
-  void on<Event extends EventBase>(
+  Disposable on<Event extends EventBase>(
     EventHandler<Event, State> handler, {
     HandlerPriority priority = HandlerPriority.medium,
   }) {
@@ -118,6 +110,15 @@ class AsyncEventBus<State extends StateBase> extends EventBusBase<State> {
         },
       ).listen(null);
     }
+
+    return () {
+      final handlers = _eventHandlers[Event];
+      if (handlers == null) {
+        return;
+      }
+
+      _eventHandlers[Event] = List.of(handlers)..remove(h);
+    };
   }
 
   @override
@@ -135,11 +136,11 @@ class AsyncEventBus<State extends StateBase> extends EventBusBase<State> {
   }
 
   @override
-  void after<Event extends EventBase>(
+  Disposable after<Event extends EventBase>(
     EventHandler<AfterEvent<Event, State>, State> handler, {
     HandlerPriority priority = HandlerPriority.medium,
   }) {
-    on<AfterEvent<Event, State>>(handler);
+    return on<AfterEvent<Event, State>>(handler);
   }
 
   @override
@@ -152,6 +153,8 @@ class AsyncEventBus<State extends StateBase> extends EventBusBase<State> {
     for (var completer in _eventCompleters.values) {
       await completer.future;
     }
+
+    return super.close();
   }
 }
 

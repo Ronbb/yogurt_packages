@@ -11,10 +11,18 @@ part 'event.dart';
 part 'plugin.dart';
 part 'state.dart';
 
+typedef Disposable = void Function();
+
 abstract class EventBusBase<State extends StateBase> {
-  const EventBusBase();
+  EventBusBase() {
+    onCreate();
+  }
 
   State get state;
+
+  @protected
+  @mustCallSuper
+  void onCreate() {}
 
   @protected
   @visibleForTesting
@@ -22,7 +30,7 @@ abstract class EventBusBase<State extends StateBase> {
 
   FutureOr<InvokeResult<State>> invoke<Event extends EventBase>(Event event);
 
-  void on<Event extends EventBase>(
+  Disposable on<Event extends EventBase>(
     EventHandler<Event, State> handler, {
     HandlerPriority priority = HandlerPriority.medium,
   });
@@ -31,10 +39,11 @@ abstract class EventBusBase<State extends StateBase> {
   FutureOr<void> onAfterInvoke<Event extends EventBase>(
       Event event, State previous);
 
-  void after<Event extends EventBase>(
+  Disposable after<Event extends EventBase>(
     EventHandler<AfterEvent<Event, State>, State> handler, {
     HandlerPriority priority = HandlerPriority.medium,
   });
 
-  Future<void> close();
+  @mustCallSuper
+  Future<void> close() async {}
 }

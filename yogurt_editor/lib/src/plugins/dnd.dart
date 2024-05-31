@@ -53,11 +53,11 @@ class DragEvent extends EventBase with _$DragEvent {
   const factory DragEvent.cancel() = DragCancelEvent;
 }
 
-class DropPlugin extends CellPluginBase {
+class DropPlugin extends CellPlugin {
   const DropPlugin();
 
   @override
-  void onCreate(CellController controller) {
+  Iterable<Disposable> onCreate(CellController controller) sync* {
     controller.initializePluginState<Drop>(
       (drop) => drop ?? const Drop.ready(),
     );
@@ -69,16 +69,16 @@ class DropPlugin extends CellPluginBase {
   }
 }
 
-class DragPlugin extends CellPluginBase {
+class DragPlugin extends CellPlugin {
   const DragPlugin();
 
   @override
-  void onCreate(CellController controller) {
+  Iterable<Disposable> onCreate(CellController controller) sync* {
     controller.initializePluginState<Drag>(
       (drag) => drag ?? const Drag.ready(),
     );
 
-    controller.on<DragStartEvent>((event, update) {
+    yield controller.on<DragStartEvent>((event, update) {
       update(controller.state.rebuild((Drag drag) {
         return drag.maybeWhen(
           orElse: () => drag,
@@ -90,7 +90,7 @@ class DragPlugin extends CellPluginBase {
       }));
     });
 
-    controller.on<DragUpdateEvent>((event, update) async {
+    yield controller.on<DragUpdateEvent>((event, update) async {
       final drag = controller.state<Drag>();
       if (drag is Dragging) {
         final result = controller.invoke(MoveRelativeEvent(
@@ -127,7 +127,7 @@ class DragPlugin extends CellPluginBase {
       }
     });
 
-    controller.on<DragCompleteEvent>((event, update) {
+    yield controller.on<DragCompleteEvent>((event, update) {
       update(controller.state.rebuild((Drag drag) {
         return drag.maybeMap(
           orElse: () => drag,
@@ -136,7 +136,7 @@ class DragPlugin extends CellPluginBase {
       }));
     });
 
-    controller.on<DragCancelEvent>((event, update) async {
+    yield controller.on<DragCancelEvent>((event, update) async {
       final drag = controller.state<Drag>();
       if (drag is Dragging) {
         controller.invoke(MoveEvent(

@@ -28,12 +28,12 @@ class _TestEvent extends EventBase with _TestValue {
   final Object? value;
 }
 
-class _TestPlugin extends PluginBase<AsyncEventBus> {
-  _TestPlugin();
+class _TestPlugin extends AutoDisposePlugin {
+  const _TestPlugin();
 
   @override
-  void onCreate(AsyncEventBus controller) {
-    controller.on<_TestEvent>((event, update) {
+  Iterable<Disposable> onCreate(PluginManager controller) sync* {
+    yield controller.on<_TestEvent>((event, update) {
       update(_TestState(event.value));
     });
   }
@@ -43,10 +43,30 @@ void main() {
   test('event bus', () async {
     final bus = AsyncEventBus(
       state: const _TestState(null),
-      plugins: [_TestPlugin()],
+      plugins: const [_TestPlugin()],
     );
 
     final result = await bus.invoke(const _TestEvent(null));
+    expect(result, isA<InvokeDone>());
+  });
+
+  test('disposable plugin', () async {
+    final bus = AsyncEventBus(
+      state: const _TestState(null),
+      plugins: const [
+        _TestPlugin(),
+      ],
+    );
+
+    var result = await bus.invoke(const _TestEvent(null));
+    expect(result, isA<InvokeDone>());
+
+    bus.plugins = [];
+    result = await bus.invoke(const _TestEvent(null));
+    expect(result, isA<InvokeUnhandled>());
+
+    bus.plugins = const [_TestPlugin()];
+    result = await bus.invoke(const _TestEvent(null));
     expect(result, isA<InvokeDone>());
   });
 }

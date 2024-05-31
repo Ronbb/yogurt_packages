@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Disposable plugin.
+
 ## 0.0.4
 
 - Upgrade deps.

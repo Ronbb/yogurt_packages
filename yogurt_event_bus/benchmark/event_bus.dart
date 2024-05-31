@@ -1,12 +1,12 @@
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:yogurt_event_bus/yogurt_event_bus.dart';
 
-class _IncreasePlugin extends PluginBase<EventBusBase<int>> {
-  const _IncreasePlugin();
+class _IncreasePlugin extends AutoDisposePlugin<int> {
+  _IncreasePlugin();
 
   @override
-  void onCreate(EventBusBase<int> controller) {
-    controller.on<int>((event, update) {
+  Iterable<Disposable> onCreate(EventBusBase<int> controller) sync* {
+    yield controller.on<int>((event, update) {
       update(controller.state + event);
     });
   }
@@ -17,7 +17,7 @@ class AsyncEventBusBenchmark extends AsyncBenchmarkBase {
 
   final eventBus = AsyncEventBus<int>(
     state: 0,
-    plugins: const [_IncreasePlugin()],
+    plugins: [_IncreasePlugin()],
   );
 
   @override
@@ -37,7 +37,7 @@ class SyncEventBusBenchmark extends BenchmarkBase {
 
   final eventBus = SyncEventBus<int>(
     state: 0,
-    plugins: const [_IncreasePlugin()],
+    plugins: [_IncreasePlugin()],
   );
 
   @override

@@ -72,7 +72,7 @@ class _CellViewState extends State<CellView> {
       ],
     );
 
-    for (var plugin in widget.controller.plugins.reversed) {
+    for (var plugin in widget.controller.plugins.toList().reversed) {
       content = plugin.build(context, _controller, content);
     }
 

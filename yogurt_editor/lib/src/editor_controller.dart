@@ -13,7 +13,7 @@ class EditorController extends AsyncEventBus<EditorState> {
   EditorController({
     required CellState root,
     super.state = const EditorState(),
-    List<EditorPluginBase> plugins = const [],
+    List<EditorPlugin> plugins = const [],
   }) : super(plugins: plugins) {
     this.root = _create(root);
     _cells[root.id] = this.root;
@@ -26,14 +26,14 @@ class EditorController extends AsyncEventBus<EditorState> {
   Map<dynamic, CellController> get cells => UnmodifiableMapView(_cells);
 
   @override
-  List<EditorPluginBase> get plugins => super.plugins.cast();
+  Iterable<EditorPlugin> get plugins => super.plugins.cast();
 
   CellController _create(
     CellState state, {
-    List<CellPluginBase> extraPlugins = const [],
+    List<CellPlugin> extraPlugins = const [],
   }) {
     final pluginIds = <Object?>{};
-    final plugins = <CellPluginBase>[];
+    final plugins = <CellPlugin>[];
 
     for (var plugin in [...state.model.plugins, ...extraPlugins].reversed) {
       if (plugin.id != null && pluginIds.contains(plugin.id)) {
@@ -54,7 +54,7 @@ class EditorController extends AsyncEventBus<EditorState> {
   CellController create(
     CellState state, {
     CellController? parent,
-    List<CellPluginBase> extraPlugins = const [],
+    List<CellPlugin> extraPlugins = const [],
   }) {
     if (_cells.containsKey(state.id)) {
       throw Exception('cell with id ${state.id} is existed');
@@ -99,10 +99,11 @@ class EditorController extends AsyncEventBus<EditorState> {
   }
 }
 
-abstract class EditorPluginBase extends PluginBase<EditorController> {
-  const EditorPluginBase();
+abstract class EditorPlugin
+    extends AutoDisposePluginBase<EditorState, EditorController> {
+  const EditorPlugin();
 
-  CellPluginBase? get cell => null;
+  CellPlugin? get cell => null;
 }
 
 @freezed
