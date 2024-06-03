@@ -1,3 +1,7 @@
+## 0.0.8
+
+- Export yogurt_event_bus.
+
 ## 0.0.7
 
 - Disposable plugin.

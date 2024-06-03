@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:yogurt_event_bus/yogurt_event_bus.dart';
 
 import 'test_utils.dart';
 
