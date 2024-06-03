@@ -84,7 +84,7 @@ class DragPlugin extends CellPlugin {
           orElse: () => drag,
           ready: () => Drag.dragging(
             initialPosition: controller.state<Bounds>().position,
-            initialParentId: controller.parent?.state.id,
+            initialParentId: controller.parent?.id,
           ),
         );
       }));

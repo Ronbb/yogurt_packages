@@ -1,6 +1,6 @@
 name: yogurt_editor
 description: "A flexible editor create and manipulate diagrams programmatically. Easily generate, customize, and visualize diagrams within your applications."
-version: 0.0.8
+version: 0.0.9
 homepage: "https://github.com/Ronbb/yogurt_packages"
 
 environment:

@@ -4,10 +4,7 @@ import 'test_utils.dart';
 
 void main() {
   group('path', () {
-    final editor = EditorController(
-      state: const EditorState(),
-      root: TestCellModel.create(),
-    );
+    final editor = createTestEditor();
 
     test('rebuild', () async {
       final cell1 = editor.createTest(
@@ -61,8 +58,8 @@ void main() {
       final edge = editor.createTest(
         state: {
           EdgePath: EdgePath(
-            sourceId: connector1.state.id,
-            targetId: connector2.state.id,
+            sourceId: connector1.id,
+            targetId: connector2.id,
           ),
         },
         extraPlugins: const [PathPlugin()],
@@ -139,8 +136,8 @@ void main() {
       final edge = editor.createTest(
         state: {
           EdgePath: EdgePath(
-            sourceId: connector1.state.id,
-            targetId: connector2.state.id,
+            sourceId: connector1.id,
+            targetId: connector2.id,
           ),
         },
         extraPlugins: const [PathPlugin()],

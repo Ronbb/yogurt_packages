@@ -49,14 +49,14 @@ class CellTreePlugin extends CellPlugin {
   @override
   void onChildAdded(CellController controller, CellController child) {
     controller.invoke(AddCellEvent(
-      id: child.state.id,
+      id: child.id,
     ));
   }
 
   @override
   void onChildRemoved(CellController controller, CellController child) {
     controller.invoke(RemoveCellEvent(
-      id: child.state.id,
+      id: child.id,
     ));
   }
 }

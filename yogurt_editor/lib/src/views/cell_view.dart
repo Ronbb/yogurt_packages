@@ -64,7 +64,12 @@ class _CellViewState extends State<CellView> {
     Widget content = Stack(
       fit: StackFit.expand,
       children: [
-        _state.model.build(context, _state),
+        ListenableBuilder(
+          listenable: _controller.model,
+          builder: (context, _) {
+            return _controller.model.build(context, _state);
+          },
+        ),
         for (final child in _controller.children.values)
           CellView(
             controller: child,

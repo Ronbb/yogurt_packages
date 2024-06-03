@@ -11,12 +11,14 @@ part 'editor_controller.freezed.dart';
 
 class EditorController extends AsyncEventBus<EditorState> {
   EditorController({
-    required CellState root,
+    dynamic rootId,
+    CellState rootState = const CellState(),
+    required CellModel rootModel,
     super.state = const EditorState(),
     List<EditorPlugin> plugins = const [],
   }) : super(plugins: plugins) {
-    this.root = _create(root);
-    _cells[root.id] = this.root;
+    root = _create(rootId, rootState, rootModel);
+    _cells[root.id] = root;
   }
 
   late final CellController root;
@@ -29,43 +31,39 @@ class EditorController extends AsyncEventBus<EditorState> {
   Iterable<EditorPlugin> get plugins => super.plugins.cast();
 
   CellController _create(
-    CellState state, {
+    dynamic id,
+    CellState state,
+    CellModel model, {
     List<CellPlugin> extraPlugins = const [],
   }) {
-    final pluginIds = <Object?>{};
-    final plugins = <CellPlugin>[];
-
-    for (var plugin in [...state.model.plugins, ...extraPlugins].reversed) {
-      if (plugin.id != null && pluginIds.contains(plugin.id)) {
-        continue;
-      }
-
-      pluginIds.add(plugin.id);
-      plugins.add(plugin);
-    }
-
     return CellController._(
+      id: id,
       editor: this,
       state: state,
-      plugins: plugins.reversed.toList(),
+      model: model,
+      extraPlugins: extraPlugins,
     );
   }
 
-  CellController create(
-    CellState state, {
+  CellController create({
+    required dynamic id,
+    required CellModel model,
+    CellState state = const CellState(),
     CellController? parent,
     List<CellPlugin> extraPlugins = const [],
   }) {
-    if (_cells.containsKey(state.id)) {
-      throw Exception('cell with id ${state.id} is existed');
+    if (_cells.containsKey(id)) {
+      throw Exception('cell with id $id is existed');
     }
 
     final cell = _create(
+      id,
       state,
+      model,
       extraPlugins: extraPlugins,
     );
 
-    _cells[state.id] = cell;
+    _cells[id] = cell;
 
     (parent ?? root).add(cell);
 
@@ -84,7 +82,7 @@ class EditorController extends AsyncEventBus<EditorState> {
     if (child.parent == parent) {
       return;
     }
-    child.parent?.remove(child.state.id);
+    child.parent?.remove(child.id);
     parent.add(child);
   }
 
@@ -106,18 +104,16 @@ abstract class EditorPlugin
   CellPlugin? get cell => null;
 }
 
-@freezed
-class StateWithData extends StateBase with _$StateWithData {
-  const StateWithData._();
+typedef EditorState = DynamicState;
 
-  const factory StateWithData.editor({
-    @Default({}) Map<Type, dynamic> all,
-  }) = EditorState;
-  const factory StateWithData.cell({
-    required dynamic id,
-    required CellModelBase model,
-    @Default({}) Map<Type, dynamic> all,
-  }) = CellState;
+typedef CellState = DynamicState;
+
+@freezed
+class DynamicState extends StateBase with _$DynamicState {
+  const DynamicState._();
+
+  const factory DynamicState([@Default({}) Map<Type, dynamic> all]) =
+      _DynamicState;
 
   @useResult
   T get<T>() {

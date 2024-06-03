@@ -38,34 +38,34 @@ class _ExampleState extends State<Example> {
   void initState() {
     super.initState();
     controller = EditorController(
-      root: CellState(
-        id: _id(),
-        model: CustomCellModel(
-          builder: (context, state) {
-            return const SizedBox();
-          },
-        ),
+      rootId: _id(),
+      rootModel: CustomCellModel(
+        builder: (context, state) {
+          return const SizedBox();
+        },
       ),
     );
 
-    final n1 = controller.create(CellState(
+    final n1 = controller.create(
       id: _id(),
-      model: const NodeModel(),
-      all: const {
-        Bounds: Bounds.fixed(
-          left: 100,
-          top: 100,
-          width: 100,
-          height: 100,
-        ),
-      },
-    ));
+      model: NodeModel(),
+      state: const CellState(
+        {
+          Bounds: Bounds.fixed(
+            left: 100,
+            top: 100,
+            width: 100,
+            height: 100,
+          ),
+        },
+      ),
+    );
 
     controller.create(
-      CellState(
-        id: _id(),
-        model: const NodeModel(),
-        all: const {
+      id: _id(),
+      model: NodeModel(),
+      state: const CellState(
+        {
           Bounds: Bounds.fixed(
             left: 20,
             top: 20,
@@ -77,24 +77,26 @@ class _ExampleState extends State<Example> {
       parent: n1,
     );
 
-    controller.create(CellState(
+    controller.create(
       id: _id(),
-      model: const NodeModel(),
-      all: const {
-        Bounds: Bounds.fixed(
-          left: 250,
-          top: 150,
-          width: 100,
-          height: 100,
-        ),
-      },
-    ));
+      model: NodeModel(),
+      state: const CellState(
+        {
+          Bounds: Bounds.fixed(
+            left: 250,
+            top: 150,
+            width: 100,
+            height: 100,
+          ),
+        },
+      ),
+    );
 
     controller.create(
-      CellState(
-        id: _id(),
-        model: const IntrinsicNodeModel(),
-        all: const {
+      id: _id(),
+      model: IntrinsicNodeModel(),
+      state: const CellState(
+        {
           String: 'inner text',
           Bounds: Bounds.intrinsic(
             top: 300,
@@ -120,8 +122,8 @@ class _ExampleState extends State<Example> {
   }
 }
 
-class NodeModel extends CellModelBase {
-  const NodeModel();
+class NodeModel extends CellModel {
+  NodeModel();
 
   @override
   List<CellPlugin> get plugins => const [
@@ -139,8 +141,8 @@ class NodeModel extends CellModelBase {
   }
 }
 
-class IntrinsicNodeModel extends CellModelBase {
-  const IntrinsicNodeModel();
+class IntrinsicNodeModel extends CellModel {
+  IntrinsicNodeModel();
 
   @override
   List<CellPlugin> get plugins => const [

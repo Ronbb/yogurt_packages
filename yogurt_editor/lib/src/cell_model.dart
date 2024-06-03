@@ -2,16 +2,16 @@ import 'package:flutter/widgets.dart';
 
 import 'editor_controller.dart';
 
-abstract class CellModelBase {
-  const CellModelBase();
+abstract class CellModel extends ChangeNotifier {
+  CellModel();
 
   List<CellPlugin> get plugins => const [];
 
   Widget build(BuildContext context, CellState state);
 }
 
-class CustomCellModel extends CellModelBase {
-  const CustomCellModel({
+class CustomCellModel extends CellModel {
+  CustomCellModel({
     required this.builder,
     this.plugins = const [],
   });

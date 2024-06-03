@@ -4,10 +4,7 @@ import 'test_utils.dart';
 
 void main() {
   group('dnd', () {
-    final editor = EditorController(
-      state: const EditorState(),
-      root: TestCellModel.create(),
-    );
+    final editor = createTestEditor();
 
     test('initial', () async {
       final cell = editor.createTest(
@@ -32,7 +29,7 @@ void main() {
         cell.state<Drag>(),
         Dragging(
           initialPosition: Offset.zero,
-          initialParentId: cell.parent?.state.id,
+          initialParentId: cell.parent?.id,
         ),
       );
     });
@@ -105,13 +102,10 @@ void main() {
     });
 
     test('drop', () async {
-      final editor = EditorController(
-        state: const EditorState(),
-        root: TestCellModel.create(
-          plugins: const [
-            DropPlugin(),
-          ],
-        ),
+      final editor = createTestEditor(
+        rootPlugins: const [
+          DropPlugin(),
+        ],
       );
 
       final container = editor.createTest(
@@ -164,13 +158,10 @@ void main() {
     });
 
     test('drop disable', () async {
-      final editor = EditorController(
-        state: const EditorState(),
-        root: TestCellModel.create(
-          plugins: const [
-            DropPlugin(),
-          ],
-        ),
+      final editor = createTestEditor(
+        rootPlugins: const [
+          DropPlugin(),
+        ],
       );
 
       final container = editor.createTest(
@@ -231,13 +222,10 @@ void main() {
     });
 
     test('drop prevent', () async {
-      final editor = EditorController(
-        state: const EditorState(),
-        root: TestCellModel.create(
-          plugins: const [
-            DropPlugin(),
-          ],
-        ),
+      final editor = createTestEditor(
+        rootPlugins: const [
+          DropPlugin(),
+        ],
       );
 
       final container = editor.createTest(

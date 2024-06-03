@@ -113,7 +113,7 @@ class IntrinsicBoundsPlugin extends CellPlugin with BoundsBuilder {
 
         if (size == null) {
           throw Exception(
-            "cell ${controller.state.id} do not have an IntrinsicBounds",
+            "cell ${controller.id} do not have an IntrinsicBounds",
           );
         }
 
@@ -155,7 +155,7 @@ class IntrinsicBoundsPlugin extends CellPlugin with BoundsBuilder {
 
         if (size == null) {
           throw Exception(
-            "cell ${controller.state.id} do not have an IntrinsicBounds",
+            "cell ${controller.id} do not have an IntrinsicBounds",
           );
         }
 

@@ -76,46 +76,60 @@ class _HasNotified extends Matcher {
   }
 }
 
-class TestCellModel extends CellModelBase {
-  const TestCellModel({
-    this.plugins = const [],
-    this.builder,
-  });
-
-  static var id = 0;
-
-  static CellState create({
-    Map<Type, dynamic> state = const {},
+class TestCellModel extends CellModel {
+  TestCellModel({
     List<CellPlugin> plugins = const [],
     Widget Function(BuildContext context, CellState state)? builder,
-  }) {
-    return CellState(
-      id: id++,
-      model: TestCellModel(
-        plugins: plugins,
-        builder: builder,
-      ),
-      all: state,
-    );
-  }
+  })  : _builder = builder,
+        _plugins = plugins;
+
+  static var _id = 0;
+
+  static int nextId() => _id++;
 
   static Widget defaultBuilder(BuildContext context, CellState state) {
     return const SizedBox();
   }
 
-  @override
-  final List<CellPlugin> plugins;
+  final List<CellPlugin> _plugins;
 
-  final Widget Function(BuildContext context, CellState state)? builder;
+  @override
+  List<CellPlugin> get plugins => _plugins;
+  set plugins(List<CellPlugin> value) {
+    _plugins.clear();
+    _plugins.addAll(value);
+    notifyListeners();
+  }
+
+  Widget Function(BuildContext context, CellState state)? _builder;
+  Widget Function(BuildContext context, CellState state)? get builder =>
+      _builder;
+  set builder(Widget Function(BuildContext context, CellState state)? value) {
+    _builder = value;
+    notifyListeners();
+  }
 
   @override
   Widget build(BuildContext context, CellState state) {
-    return (builder ?? defaultBuilder)(context, state);
+    return (_builder ?? defaultBuilder)(context, state);
   }
+}
+
+EditorController createTestEditor({
+  List<CellPlugin> rootPlugins = const [],
+  List<EditorPlugin> plugins = const [],
+}) {
+  return EditorController(
+    rootModel: TestCellModel(
+      plugins: rootPlugins,
+    ),
+    plugins: plugins,
+  );
 }
 
 extension TestEditorController on EditorController {
   CellController createTest({
+    dynamic id,
     Map<Type, dynamic> state = const {},
     List<CellPlugin> plugins = const [],
     CellController? parent,
@@ -123,13 +137,18 @@ extension TestEditorController on EditorController {
     Widget Function(BuildContext context, CellState state)? builder,
   }) {
     return create(
-      TestCellModel.create(
-        state: state,
+      id: id ?? TestCellModel.nextId(),
+      model: TestCellModel(
         plugins: plugins,
         builder: builder,
       ),
+      state: CellState(state),
       parent: parent,
       extraPlugins: extraPlugins,
     );
   }
+}
+
+extension TestCellController on CellController {
+  TestCellModel get testModel => model as TestCellModel;
 }

@@ -20,11 +20,22 @@ class DependencyEvent<Event extends EventBase, State extends StateBase>
 
 class CellController extends SyncEventBus<CellState> {
   CellController._({
+    required this.id,
+    required this.model,
     required super.state,
-    List<CellPlugin> super.plugins = const [],
-    CellController? parent,
     required this.editor,
-  }) : _parent = parent;
+    required this.extraPlugins,
+    CellController? parent,
+  }) : _parent = parent {
+    _updatePlugins();
+    model.addListener(_onModelUpdated);
+  }
+
+  final dynamic id;
+
+  final CellModel model;
+
+  final List<CellPlugin> extraPlugins;
 
   CellController? _parent;
 
@@ -32,6 +43,12 @@ class CellController extends SyncEventBus<CellState> {
 
   @override
   Iterable<CellPlugin> get plugins => super.plugins.cast();
+
+  @protected
+  @override
+  set plugins(Iterable<Plugin<CellState>> plugins) {
+    super.plugins = plugins;
+  }
 
   final EditorController editor;
 
@@ -45,8 +62,28 @@ class CellController extends SyncEventBus<CellState> {
 
   CellController? child(dynamic id) => _children[id];
 
+  void _onModelUpdated() {
+    _updatePlugins();
+  }
+
+  void _updatePlugins() {
+    final pluginIds = <Object?>{};
+    final plugins = <CellPlugin>[];
+
+    for (var plugin in [...model.plugins, ...extraPlugins].reversed) {
+      if (plugin.id != null && pluginIds.contains(plugin.id)) {
+        continue;
+      }
+
+      pluginIds.add(plugin.id);
+      plugins.add(plugin);
+    }
+
+    super.plugins = plugins.reversed.toList();
+  }
+
   void add(CellController cell) {
-    _children[cell.state.id] = cell;
+    _children[cell.id] = cell;
     cell._parent = this;
     for (var plugin in plugins) {
       plugin.onChildAdded(this, cell);
@@ -79,7 +116,7 @@ class CellController extends SyncEventBus<CellState> {
   bool hasAncestor(dynamic id) {
     var result = false;
     visitAncestors((cell) {
-      if (cell.state.id == id) {
+      if (cell.id == id) {
         result = true;
         return false;
       }
@@ -112,7 +149,7 @@ class CellController extends SyncEventBus<CellState> {
       return null;
     }
 
-    return cell.hasAncestor(state.id) ? cell : null;
+    return cell.hasAncestor(this.id) ? cell : null;
   }
 
   bool hasDescendant(dynamic id) {
@@ -121,23 +158,23 @@ class CellController extends SyncEventBus<CellState> {
       return false;
     }
 
-    return cell.hasAncestor(state.id);
+    return cell.hasAncestor(this.id);
   }
 
   void _addDependingCell(CellController cell) {
-    _dependingCells[cell.state.id] = cell;
+    _dependingCells[cell.id] = cell;
   }
 
   void _removeDependingCell(CellController cell) {
-    _dependingCells.remove(cell.state.id);
+    _dependingCells.remove(cell.id);
   }
 
   void _addDependedCell(CellController cell) {
-    _dependedCells[cell.state.id] = cell;
+    _dependedCells[cell.id] = cell;
   }
 
   void _removeDependedCell(CellController cell) {
-    _dependedCells.remove(cell.state.id);
+    _dependedCells.remove(cell.id);
   }
 
   void initializePluginState<T>(T Function(T?) creator) {
@@ -172,7 +209,13 @@ class CellController extends SyncEventBus<CellState> {
 
   @override
   String toString() {
-    return '<Cell ${state.id}>';
+    return '<Cell $id>';
+  }
+
+  @override
+  Future<void> close() {
+    model.removeListener(_onModelUpdated);
+    return super.close();
   }
 }
 

@@ -6,23 +6,18 @@ import 'test_utils.dart';
 
 void main() {
   group('bounds', () {
-    final editor = EditorController(
-      state: const EditorState(),
-      root: TestCellModel.create(),
-    );
-
     test('initial', () async {
+      final editor = createTestEditor();
+
       final cell = editor.createTest(
         plugins: const [BoundsPlugin()],
       );
+
       expect(cell.state<Bounds>(), isNotNull);
     });
 
     test('hit test', () async {
-      final editor = EditorController(
-        state: const EditorState(),
-        root: TestCellModel.create(),
-      );
+      final editor = createTestEditor();
 
       final cell1 = editor.createTest(
         state: {
@@ -60,6 +55,8 @@ void main() {
     });
 
     test('move relatively', () async {
+      final editor = createTestEditor();
+
       final cell = editor.createTest(
         state: {
           Bounds: const Bounds.fixed(
@@ -82,6 +79,8 @@ void main() {
     });
 
     test('move', () async {
+      final editor = createTestEditor();
+
       final cell = editor.createTest(
         state: {
           Bounds: const Bounds.fixed(
@@ -104,6 +103,8 @@ void main() {
     });
 
     test('resize relatively', () async {
+      final editor = createTestEditor();
+
       final cell = editor.createTest(
         state: {
           Bounds: const Bounds.fixed(
@@ -121,6 +122,7 @@ void main() {
           delta: Offset(50, 50),
         ),
       );
+
       expect(result, isA<InvokeDone>());
       expect(cell.state<Bounds>().size, const Size(150, 150));
     });

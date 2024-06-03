@@ -1,3 +1,7 @@
+## 0.0.9
+
+Refactor cell model.
+
 ## 0.0.8
 
 - Export yogurt_event_bus.
